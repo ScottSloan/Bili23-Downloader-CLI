@@ -22,11 +22,10 @@ pip install bili23
 由于 `dash` 格式视频依赖 `ffmpeg` 进行合成，需事先安装
 
 #### Windows 用户请按照下面的步骤安装：  
-ffmpeg 下载地址：[蓝奏云](https://wwf.lanzout.com/iKl7j0fobykf) 密码:4kk0  
+ffmpeg 下载地址：[蓝奏云](https://wwf.lanzout.com/iTYX00ft3u4h)  密码:h9ge
+解压压缩包至任意位置，按照以下步骤创建环境变量：
 
-解压压缩包，将 `ffmpeg.exe` 放入 `ffmpeg` 文件夹，按照以下步骤创建环境变量：
-
-此电脑 -> 右键 -> 属性 -> 高级系统设置 -> 环境变量 -> 系统变量 -> Path -> 编辑 -> 新建 -> ffmpeg 文件夹路径
+此电脑 -> 右键 -> 属性 -> 高级系统设置 -> 环境变量 -> 系统变量 -> Path -> 编辑 -> 新建 -> ffmpeg 所在文件夹的路径
 
 详细步骤请看[这里](https://scott.o5g.top/index.php/archives/120/)
 
@@ -34,6 +33,12 @@ ffmpeg 下载地址：[蓝奏云](https://wwf.lanzout.com/iKl7j0fobykf) 密码:4
 
 ```
 sudo apt install ffmpeg
+```
+## 更新
+运行以下命令更新：
+
+```
+pip install bili23 --upgrade
 ```
 
 ## 使用
