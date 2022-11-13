@@ -1,5 +1,5 @@
 # Bili23-Downloader-CLI
-![Version](https://img.shields.io/github/v/release/ScottSloan/Bili23-Downloader-CLI?style=flat-square) ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square) 
+![Version](https://img.shields.io/github/v/release/ScottSloan/Bili23-Downloader-CLI?style=flat-square) ![Python](https://img.shields.io/badge/Python-3.9.12-green?style=flat-square) ![License](https://img.shields.io/badge/license-MIT-orange?style=flat-square) 
 
 Bili23 Downloader CLI 命令行版本
 
@@ -8,6 +8,10 @@ Bili23 Downloader CLI 命令行版本
 + [使用说明](#使用说明)
 + [开发日志](#开发日志)
 + [联系方式](#联系方式)
+
+### Bili23 Downloader 系列
+* [GUI 桌面端版本](https://github.com/ScottSloan/Bili23-Downloader)
+* CLI 命令行版本
 
 # 使用说明
 ## 安装
@@ -133,32 +137,6 @@ bili23 --p "BV1fd4y117xT" --a
 本次更新内容如下：
 * 支持 --q, --codec 参数，详情请查看[使用说明](https://github.com/ScottSloan/Bili23-Downloader-CLI)
 * 修复部分已知问题
-
-<details>
-<summary>Version 1.01</summary>
-
-### Version 1.01 (2022-11-12)
-本次更新内容如下：
-* 支持 --d, --t, --a 参数，详情请查看[使用说明](https://github.com/ScottSloan/Bili23-Downloader-CLI)
-* 优化程序逻辑
-* 支持 Linux 平台
-* 修复部分已知问题
-
-</details>
-
-<details>
-<summary>Version 1.00</summary>
-
-### Version 1.00 (2022-11-11)
-Bili23 Downloader CLI 命令行版本正式发布！
-
-CLI 版本延续 Bili23 Downloader 系列简便易用的的设计理念，与 GUI 版本一道，为用户带来最佳的使用体验。
-
-本次更新内容如下：
-* 支持下载用户投稿视频和番组类型的视频
-* 多线程高速下载视频
-
-</details>
 
 # 联系方式
 Email: scottsloan@petalmail.com  
