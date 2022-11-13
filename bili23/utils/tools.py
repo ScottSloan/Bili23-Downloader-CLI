@@ -5,7 +5,7 @@ import requests
 
 from .config import Config
 
-quality_wrap = {"超高清 8K":127, "杜比视界":126, "真彩 HDR":125, "超清 4K":120, "高清 1080P60":116, "高清 1080P+":112, "高清 1080P":80, "高清 720P":64, "清晰 480P":32, "流畅 360P":16}
+quality_wrap = {"超高清 8K": 127, "杜比视界": 126, "真彩 HDR": 125, "超清 4K": 120, "高清 1080P60": 116, "高清 1080P+": 112, "高清 1080P": 80, "高清 720P": 64, "清晰 480P": 32, "流畅 360P": 16}
 codec_wrap = {"AVC": 0, "HEVC": 1, "AV1": 2}
 
 def process_shortlink(url: str):

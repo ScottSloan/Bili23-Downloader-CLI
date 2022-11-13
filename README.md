@@ -21,21 +21,22 @@ pip install bili23
 ### 安装 ffmpeg
 由于 `dash` 格式视频依赖 `ffmpeg` 进行合成，需事先安装
 
-#### Windows 用户请按照下面的步骤安装：  
-ffmpeg 下载地址：[蓝奏云](https://wwf.lanzout.com/iTYX00ft3u4h)  密码:h9ge
-解压压缩包至任意位置，按照以下步骤创建环境变量：
+### Windows 用户请按照下面的步骤安装：  
+ffmpeg 下载地址：[蓝奏云](https://wwf.lanzout.com/iTYX00ft3u4h)  密码:h9ge  
 
-此电脑 -> 右键 -> 属性 -> 高级系统设置 -> 环境变量 -> 系统变量 -> Path -> 编辑 -> 新建 -> ffmpeg 所在文件夹的路径
+解压压缩包，记录 `ffmpeg` 所在文件夹的路径，按照以下步骤创建环境变量：
+
+> 此电脑 -> 右键 -> 属性 -> 高级系统设置 -> 环境变量 -> 系统变量 -> Path -> 编辑 -> 新建 -> ffmpeg 所在文件夹的路径
 
 详细步骤请看[这里](https://scott.o5g.top/index.php/archives/120/)
 
-#### Linux 用户请执行以下命令安装：  
+### Linux 用户请执行以下命令安装：  
 
 ```
 sudo apt install ffmpeg
 ```
 ## 更新
-运行以下命令更新：
+运行以下命令更新 Bili23 Downloader CLI：
 
 ```
 pip install bili23 --upgrade
@@ -47,19 +48,21 @@ pip install bili23 --upgrade
 bili23 [OPTIONS]
 ```
 
-| 选项 | 说明 |
+| 参数 | 说明 |
 | ---- | ---- |
 | --i, --info URL | 获取视频信息 |
 | --p, --parse URL | 解析视频链接 |
 | --d, --dir | 指定下载目录，默认为当前运行目录 |
 | --t, --thread | 指定下载线程数，默认为 4 个线程 |
+| --q, --quality | 指定下载的清晰度，默认为 80 (1080P) |
+| --codec | 指定下载的视频编码，默认为 HEVC (HEVC/H.265) |
 | --a, --all | 下载全部视频 |
 | --v, --version | 显示版本信息 |
 | --h, --help | 显示帮助信息 |
 
-**建议为 URL 添加引号，以避免操作系统误识别 & 符号**
+**注意：URL 链接需加上引号**
 
-### --i, --info 选项
+### --i, --info 参数
 打印输出视频信息
 
 示例
@@ -69,14 +72,16 @@ bili23 --i "BV1fd4y117xT"
 
 [![zi2yd0.png](https://s1.ax1x.com/2022/11/12/zi2yd0.png)](https://imgse.com/i/zi2yd0)
 
-### --p, --parse 选项
+### --p, --parse 参数
 解析视频链接并下载
 
 配合以下参数使用：
-| 选项 | 说明 |
+| 参数 | 说明 |
 | ---- | ---- |
 | --d, --dir | 指定下载目录，默认为当前运行目录 |
 | --t, --thread | 指定下载线程数，默认为 4 个线程 |
+| --q, --quality | 指定下载的清晰度，默认为 80 (1080P) |
+| --codec | 指定下载的视频编码，默认为 HEVC (HEVC/H.265) |
 | --a, --all | 下载全部视频 |
 
 示例
@@ -100,13 +105,46 @@ bili23 --p "BV1fd4y117xT" --a
 
 [![ziRHns.png](https://s1.ax1x.com/2022/11/12/ziRHns.png)](https://imgse.com/i/ziRHns)
 
+### --q, --quality 参数
+指定下载的清晰度
+| 描述 | 清晰度 |
+| ---- | ---- |
+| 超高清 8K | 127 |
+| 杜比视界 | 126 |
+| 真彩 HDR | 125 |
+| 超清 4K | 120 |
+| 高清 1080P60 | 116 |
+| 高清 1080P+ | 112 |
+| 高清 1080P | 80 |
+| 高清 720P | 64 |
+| 清晰 480P | 32 |
+| 流畅 360P | 16 |
+
+### --codec 参数
+指定下载的视频编码
+| 类型 | 编码 |
+| ---- | ---- |
+| AVC/H.264 | AVC |
+| HEVC/H.265 | HEVC |
+| AV1 | AV1 |
+
 # 更新日志
+### Version 1.02 (2022-11-13)
+本次更新内容如下：
+* 支持 --q, --codec 参数，详情请查看[使用说明](https://github.com/ScottSloan/Bili23-Downloader-CLI)
+* 修复部分已知问题
+
+<details>
+<summary>Version 1.01</summary>
+
 ### Version 1.01 (2022-11-12)
 本次更新内容如下：
 * 支持 --d, --t, --a 参数，详情请查看[使用说明](https://github.com/ScottSloan/Bili23-Downloader-CLI)
 * 优化程序逻辑
 * 支持 Linux 平台
 * 修复部分已知问题
+
+</details>
 
 <details>
 <summary>Version 1.00</summary>

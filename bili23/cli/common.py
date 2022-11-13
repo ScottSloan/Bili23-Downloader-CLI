@@ -118,9 +118,63 @@ def check_ffmpeg_available(exit = False):
         else:
             detail = '请执行 "sudo apt install ffmpeg" 命令安装'
 
-        print("\033[33m\nNotice：尚未安装 ffmpeg，{}\n项目地址：{}\n\033[0m".format(detail, Config.app_website))
+        print("\033[33m\nNotice: 尚未安装 ffmpeg，{}\n项目地址：{}\n\033[0m".format(detail, Config.app_website))
 
         if exit: 
             remove_files(Config.download_path, ["video.mp4", "audio.mp3"])
 
             sys.exit()
+
+def check_arguments():
+    check_quality()
+
+    check_thread()
+
+    check_codec()
+
+    if not os.path.exists(Config.download_path):
+        os.makedirs(Config.download_path)
+
+def check_quality():
+    if Config.default_quality not in list(quality_wrap.values()):
+        print("\033[33mWaning: 清晰度参数无效\n\033[0m")
+        
+        print("可用的清晰度：")
+        print("|------------------------|")
+        print("| 描述         | 清晰度  |")
+        print("| -------------|---------|")
+        print("| 超高清 8K    | 127     |")
+        print("| 杜比视界     | 126     |")
+        print("| 真彩 HDR     | 125     |")
+        print("| 超清 4K      | 120     |")
+        print("| 高清 1080P60 | 116     |")
+        print("| 高清 1080P+  | 112     |")
+        print("| 高清 1080P   | 80      |")
+        print("| 高清 720P    | 64      |")
+        print("| 清晰 480P    | 32      |")
+        print("| 流畅 360P    | 16      |")
+        print("|------------------------|")
+
+        sys.exit()
+
+def check_thread():
+    if Config.max_thread < 1 or Config.max_thread > 16:
+        print("\033[33mWaning: 线程参数无效\n\033[0m")
+
+        print("线程数应在 1 - 16 之间")
+        sys.exit()
+
+def check_codec():
+    if Config.codec not in list(codec_wrap.keys()):
+        print("\033[33mWaning: 视频编码参数无效\n\033[0m")
+
+        print("可用的视频编码：")
+        print("|----------------------|")
+        print("| 类型       | 编码    |")
+        print("|------------|---------|")
+        print("| AVC/H.264  | AVC     |")
+        print("| HEVC/H.265 | HEVC    |")
+        print("| AV1        | AV1     |")
+        print("|----------------------|")
+
+        sys.exit()

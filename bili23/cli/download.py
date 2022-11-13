@@ -142,7 +142,7 @@ class DownloadUtils:
 
         legal_title = get_legal_name(title)
 
-        cmd = f'''ffmpeg -v quiet -i audio.mp3 -i video.mp4 -acodec copy -vcodec copy "{legal_title}.mp4"'''
+        cmd = f'''cd {Config.download_path} && ffmpeg -v quiet -i audio.mp3 -i video.mp4 -acodec copy -vcodec copy "{legal_title}.mp4"'''
             
         merge_process = subprocess.Popen(cmd, shell = True)
         merge_process.wait()

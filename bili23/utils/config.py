@@ -12,9 +12,9 @@ class Config:
     user_sessdata = ""
 
     app_name = "Bili23 Downloader CLI"
-    app_version = "1.01"
-    app_version_code = 101
-    app_date = "2022-11-12"
+    app_version = "1.02"
+    app_version_code = 102
+    app_date = "2022-11-13"
     app_website = "https://github.com/ScottSloan/Bili23-Downloader-CLI"
 
     platform = platform.platform()
