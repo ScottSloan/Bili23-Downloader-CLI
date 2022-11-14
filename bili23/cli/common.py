@@ -48,6 +48,9 @@ def show_video_info():
     print("收藏：" + VideoInfo.favorite)
     print("评论：{}\n".format(VideoInfo.reply))
 
+    if Config.show_quality_list:
+        show_quality_info(VideoInfo.quality_desc)
+
 def show_bangumi_info():
     if Config.download_all:
         return
@@ -64,6 +67,17 @@ def show_bangumi_info():
     print("弹幕：" + BangumiInfo.danmaku)
     print("收藏：" + BangumiInfo.favorite)
     print("评分：{}\n".format(BangumiInfo.score))
+
+    if Config.show_quality_list:
+        show_quality_info(BangumiInfo.quality_desc)
+
+def show_quality_info(quality_list):
+    print("可用清晰度列表：")
+
+    for index, value in enumerate(quality_list):
+        print("{}.{} ({})".format(index + 1, value, quality_wrap[value]))
+
+    print()
 
 def get_episodes_selection(episodes_list):
     episodes_count = len(episodes_list)
@@ -159,14 +173,14 @@ def check_quality():
 
 def check_thread():
     if Config.max_thread < 1 or Config.max_thread > 16:
-        print("\033[33mWaning: 线程参数无效\n\033[0m")
+        print("\033[33mWarning: 线程参数无效\n\033[0m")
 
         print("线程数应在 1 - 16 之间")
         sys.exit()
 
 def check_codec():
     if Config.codec not in list(codec_wrap.keys()):
-        print("\033[33mWaning: 视频编码参数无效\n\033[0m")
+        print("\033[33mWarning: 视频编码参数无效\n\033[0m")
 
         print("可用的视频编码：")
         print("|----------------------|")

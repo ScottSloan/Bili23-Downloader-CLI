@@ -17,6 +17,9 @@ class Info:
     type = ""
 
 def parse(url, info = False):
+    if find_str("b23.tv", url):
+        url = process_shortlink(url)
+
     if find_str("BV|av", url):
         VideoParser(show_error_info, None).parse_url(url)
 
@@ -37,7 +40,6 @@ def parse(url, info = False):
 
     if not Config.download_all:
         time.sleep(1.5)
-        input("按回车键继续...")
 
     if len(VideoInfo.pages) > 1 or len(VideoInfo.episodes) > 1 or len(BangumiInfo.episodes) > 1:
         episodes_selection = show_episodes_selection(Info.type)
@@ -78,6 +80,8 @@ def main(i, p, d, t, q, codec, a):
     if p:
         Thread(target = parse, args = (p, )).start()
     elif i:
+        Config.show_quality_list = True
+        
         Thread(target = parse, args = (i, True, )).start()
     else:
         print("Bili23 Downloader CLI {}\n".format(Config.app_version))

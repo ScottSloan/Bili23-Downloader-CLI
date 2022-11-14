@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = "bili23",
-    version = "1.0.3b0",
+    version = "1.0.3",
     keywords = ["pip", "bilibili", "video-downloader", "cli"],
     description = "下载 Bilibili 视频/番剧/电影/纪录片 等资源",
     readme = "README.rst",

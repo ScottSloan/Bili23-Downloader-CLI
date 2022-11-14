@@ -114,7 +114,11 @@ class DownloadUtils:
             self.download_list.append(info)
 
     def download_video(self):
-        print("准备开始下载...")
+        quality_temp = dict(map(reversed, quality_wrap.items()))
+        codec_temp = {"AVC": "AVC/H.264", "HEVC": "HEVC/H.265", "AV1": "AV1"}
+
+        print("当前清晰度：{}   当前编码：{}\n".format(quality_temp[Config.default_quality], codec_temp[Config.codec]))
+        print("准备开始下载...\n")
 
         for episode in self.download_list:
             title = episode["title"]

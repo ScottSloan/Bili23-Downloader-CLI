@@ -8,13 +8,14 @@ class Config:
     codec = "HEVC"
     default_quality = 80
     download_all = False
+    show_quality_list = False
     
     user_sessdata = ""
 
     app_name = "Bili23 Downloader CLI"
-    app_version = "1.02"
-    app_version_code = 102
-    app_date = "2022-11-13"
+    app_version = "1.03"
+    app_version_code = 103
+    app_date = "2022-11-14"
     app_website = "https://github.com/ScottSloan/Bili23-Downloader-CLI"
 
     platform = platform.platform()
