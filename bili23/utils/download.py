@@ -56,7 +56,9 @@ class Downloader:
             
             progress = int(self.complete_size / self.total_size * 100)
             
-            self.onDownload(progress, speed)
+            size = "{}/{}".format(format_size(self.complete_size / 1024), format_size(self.total_size / 1024))
+
+            self.onDownload(progress, speed, size)
 
             if progress >= 100:
                 break 

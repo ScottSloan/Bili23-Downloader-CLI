@@ -25,7 +25,7 @@ pip install bili23
 ### 安装 ffmpeg
 由于 `dash` 格式视频依赖 `ffmpeg` 进行合成，需事先安装
 
-### Windows 用户请按照下面的步骤安装：  
+### Windows 用户请按照下面的步骤安装  
 ffmpeg 下载地址：[蓝奏云](https://wwf.lanzout.com/iTYX00ft3u4h)  密码:h9ge  
 
 解压压缩包，记录 `ffmpeg` 所在文件夹的路径，按照以下步骤创建环境变量：
@@ -34,7 +34,7 @@ ffmpeg 下载地址：[蓝奏云](https://wwf.lanzout.com/iTYX00ft3u4h)  密码:
 
 详细步骤请看[这里](https://scott.o5g.top/index.php/archives/120/)
 
-### Linux 用户请执行以下命令安装：  
+### Linux 用户请执行以下命令安装  
 
 ```
 sudo apt install ffmpeg
@@ -60,6 +60,7 @@ bili23 [OPTIONS]
 | --t, --thread | 指定下载线程数，默认为 4 个线程 |
 | --q, --quality | 指定下载的清晰度，默认为 80 (1080P) |
 | --codec | 指定下载的视频编码，默认为 HEVC (HEVC/H.265) |
+| --quiet | 静默输出 |
 | --a, --all | 下载全部视频 |
 | --v, --version | 显示版本信息 |
 | --h, --help | 显示帮助信息 |
@@ -143,13 +144,11 @@ bili23 --p "BV1fd4y117xT" --a
 | AV1 | AV1 |
 
 # 更新日志
-### Version 1.03 (2022-11-14)
+### Version 1.04 (2022-11-15)
 本次更新内容如下：
-* 支持解析 `b23.tv` 短链接
-* 获取视频信息时将显示可用的清晰度
-* 现在下载时将显示当前视频的清晰度和编码
-* 下载时不再需要用户确认
-* 修复部分已知问题
+* 支持 `--quiet` 参数 (静默输出)
+* 下载时显示文件大小和序号
+* 更新 `pypi` 仓库描述
 
 # 联系方式
 Email: scottsloan@petalmail.com  

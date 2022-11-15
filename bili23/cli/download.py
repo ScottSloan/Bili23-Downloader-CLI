@@ -120,14 +120,16 @@ class DownloadUtils:
         print("当前清晰度：{}   当前编码：{}\n".format(quality_temp[Config.default_quality], codec_temp[Config.codec]))
         print("准备开始下载...\n")
 
-        for episode in self.download_list:
+        download_count = len(self.download_list)
+
+        for index, episode in enumerate(self.download_list):
             title = episode["title"]
             
             downloader = Downloader(self.onDownload)
 
             download_list = self.get_video_durl(episode["url"], episode["bvid"], episode["cid"], episode["quality_id"])
 
-            print("\r正在下载：{}".format(title), flush = True)
+            print("\r[{}/{}] 正在下载：{}".format(index + 1, download_count, title), flush = True)
 
             downloader.start_download(download_list)
             
@@ -161,5 +163,5 @@ class DownloadUtils:
         print("\r{}".format(" " * (width - 2)), end = "", flush = True)
         print("\r", end = "", flush = True)
 
-    def onDownload(self, progress, speed):
-        print("\r{}% | {}{}  |  {}".format(progress, "█" * (progress // 4), " " * (25 - progress // 4), speed), end = "", flush = True)
+    def onDownload(self, progress, speed, size):
+        print("\r{}% | {}{}  |  {}   {}".format(progress, "█" * (progress // 4), " " * (25 - progress // 4), speed, size), end = "", flush = True)

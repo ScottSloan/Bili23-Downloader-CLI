@@ -58,15 +58,16 @@ def parse(url, info = False):
 @click.command()
 @click.option("--i", "--info", help = "显示视频链接")
 @click.option("--p", "--parse", help = "解析视频链接")
-#@click.option("--c", "--cookie", default = None, help = "指定 cookie 文件")
-#@click.option("--config", default = None, help = "指定配置文件")
 @click.option("--d", "--dir", default = os.getcwd(), help = "指定下载目录，默认为当前运行目录")
 @click.option("--t", "--thread", default = 4, help = "指定下载所用线程数，默认为 4 个线程")
 @click.option("--q", "--quality", default = 80, help = "指定下载的清晰度，默认为 80 (1080P)")
 @click.option("--codec", default = "HEVC", help = "指定下载的视频编码，默认为 HEVC (HEVC/H.265)")
+@click.option("--quiet", is_flag = True, help = "静默输出")
+#@click.option("--cookie", default = None, help = "指定 cookie 文件")
+#@click.option("--config", default = None, help = "指定配置文件")
 @click.option("--a", "--all", is_flag = True, help = "下载全部视频")
 @click.option("--v", "--version", callback = show_version_info, expose_value = False, is_eager = True, is_flag = True, help = "显示版本信息")
-def main(i, p, d, t, q, codec, a):
+def main(i, p, d, t, q, codec, quiet, a):
     check_ffmpeg_available()
     
     Config.download_path = d
@@ -74,6 +75,7 @@ def main(i, p, d, t, q, codec, a):
     Config.download_all = a
     Config.default_quality = q
     Config.codec = codec
+    Config.quiet = quiet
 
     check_arguments()
 

@@ -7,6 +7,11 @@ Bili23 Downloader CLI 命令行版本
 
 下载 Bilibili 视频/番剧/电影/纪录片 等资源
 
+Bili23 Downloader 系列
+----------------------
+`GUI 桌面端版本 <https://github.com/ScottSloan/Bili23-Downloader>`_ 
+`CLI 命令行版本 <https://github.com/ScottSloan/Bili23-Downloader-CLI>`_ 
+
 使用说明
 ========
 详细信息请移步至 `项目主页 <https://github.com/ScottSloan/Bili23-Downloader-CLI>`_ 查看
@@ -38,6 +43,13 @@ Bili23 Downloader CLI 命令行版本
     弹幕：267
     收藏：2150
     评论：238
+
+    当前清晰度：高清 1080P   当前编码：HEVC/H.265
+
+    准备开始下载...
+
+    正在下载：此片献给正处于迷茫期的你
+    72% | ██████████████████        | 19.8MB/s
 
 
 联系方式

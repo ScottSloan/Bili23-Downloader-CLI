@@ -1,5 +1,7 @@
 import re
 import sys
+from io import StringIO
+
 
 from ..utils.video import VideoInfo
 from ..utils.bangumi import BangumiInfo
@@ -140,6 +142,9 @@ def check_ffmpeg_available(exit = False):
             sys.exit()
 
 def check_arguments():
+    if Config.quiet:
+        sys.stdout = StringIO()
+
     check_quality()
 
     check_thread()
