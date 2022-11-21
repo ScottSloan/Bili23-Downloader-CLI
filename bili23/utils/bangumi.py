@@ -114,7 +114,7 @@ class BangumiParser:
             BangumiInfo.type = "综艺"
 
     def get_bangumi_quality(self):
-        bangumi_request = requests.get(self.quality_api, headers = get_header(BangumiInfo.url, cookie = Config.user_sessdata))
+        bangumi_request = requests.get(self.quality_api, headers = get_header(BangumiInfo.url, cookie = Config.sessdata))
         bangumi_json = json.loads(bangumi_request.text)
         
         self.check_json(bangumi_json)

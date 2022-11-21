@@ -8,15 +8,20 @@ from ..utils.bangumi import BangumiInfo
 from ..utils.tools import *
 from ..utils.config import Config
 
-def show_error_info(code):
+def show_error_info(code, badge = None):
     if code == 400:
         msg = "请求失败，请检查地址是否有误"
 
     elif code == 401:
-        msg = "无法获取视频下载地址"
+        if Config.sessdata == "" and badge == "会员":
+            msg = '该视频需要大会员 Cookie 才能下载，请运行 "bili23 --edit--config" 添加'
+        else:
+            msg = "无法获取视频下载地址"
 
     print("\033[33m\nError：{}\n\033[0m".format(msg))
 
+    sys.exit()
+    
 def show_version_info(ctx, param, value):
     if not value or ctx.resilient_parsing:
         return
@@ -91,7 +96,7 @@ def get_episodes_selection(episodes_list):
         pages_selection = input("\n请选择要下载的视频（填序号，0 为全部下载）：")
         result = re.findall("^\d*$", pages_selection)
 
-        if len(result) == 0 or int(result[0]) not in range(0, episodes_count + 1):
+        if len(result) == 0 or result[0] == "" or int(result[0]) not in range(0, episodes_count + 1):
             print("\033[31m输入无效，请重试\033[0m")
 
         else:
@@ -108,7 +113,7 @@ def show_episodes_selection(type):
         else:
             episodes_list = ["{}.{}".format(i["page"], i["part"] if VideoInfo.multiple else VideoInfo.title) for i in VideoInfo.pages]
     else:
-        episodes_list = ["{}.{}".format(index + 1, format_bangumi_title(value)) for index, value in enumerate(BangumiInfo.episodes)]
+        episodes_list = ["{}.{} {}".format(index + 1, format_bangumi_title(value), "({})".format(value["badge"]) if value["badge"] != "" else "") for index, value in enumerate(BangumiInfo.episodes)]
     
     return 0 if Config.download_all else get_episodes_selection(episodes_list)
 
@@ -137,7 +142,7 @@ def check_ffmpeg_available(exit = False):
         print("\033[33m\nNotice: 尚未安装 ffmpeg，{}\n项目地址：{}\n\033[0m".format(detail, Config.app_website))
 
         if exit: 
-            remove_files(Config.download_path, ["video.mp4", "audio.mp3"])
+            remove_files(Config.dir, ["video.mp4", "audio.mp3"])
 
             sys.exit()
 
@@ -145,17 +150,25 @@ def check_arguments():
     if Config.quiet:
         sys.stdout = StringIO()
 
+    if Config.edit:
+        if Config.platform.startswith("Windows"):
+            os.startfile(Config.config_path)
+        else:
+            os.system('xdg-open "{}"'.format(Config.config_path))
+
+        sys.exit()
+        
     check_quality()
 
     check_thread()
 
     check_codec()
 
-    if not os.path.exists(Config.download_path):
-        os.makedirs(Config.download_path)
+    if not os.path.exists(Config.dir):
+        os.makedirs(Config.dir)
 
 def check_quality():
-    if Config.default_quality not in list(quality_wrap.values()):
+    if Config.quality not in list(quality_wrap.values()):
         print("\033[33mWaning: 清晰度参数无效\n\033[0m")
         
         print("可用的清晰度：")
@@ -177,7 +190,7 @@ def check_quality():
         sys.exit()
 
 def check_thread():
-    if Config.max_thread < 1 or Config.max_thread > 16:
+    if Config.thread < 1 or Config.thread > 16:
         print("\033[33mWarning: 线程参数无效\n\033[0m")
 
         print("线程数应在 1 - 16 之间")

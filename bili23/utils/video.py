@@ -61,7 +61,7 @@ class VideoParser:
         VideoInfo.bvid, VideoInfo.url = bvid, "https://www.bilibili.com/video/" + bvid
 
     def get_video_info(self):
-        info_request = requests.get(self.info_api, headers = get_header(VideoInfo.url, cookie = Config.user_sessdata))
+        info_request = requests.get(self.info_api, headers = get_header(VideoInfo.url, cookie = Config.sessdata))
         info_json = json.loads(info_request.text)
 
         self.check_json(info_json)
@@ -101,7 +101,7 @@ class VideoParser:
         VideoInfo.reply = format_data(info_stat["reply"])
 
     def get_video_quality(self):
-        video_request = requests.get(self.quality_api, headers = get_header(VideoInfo.url, Config.user_sessdata))
+        video_request = requests.get(self.quality_api, headers = get_header(VideoInfo.url, Config.sessdata))
         video_json = json.loads(video_request.text)
 
         self.check_json(video_json)

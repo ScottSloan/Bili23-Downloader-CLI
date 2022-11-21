@@ -5,7 +5,7 @@ current_path = os.path.abspath(os.path.dirname(__file__))
 
 setup(
     name = "bili23",
-    version = "1.0.4",
+    version = "1.0.5",
     keywords = ["pip", "bilibili", "video-downloader", "cli"],
     description = "下载 Bilibili 视频/番剧/电影/纪录片 等资源",
     long_description = open(os.path.join(current_path, "README.rst"), encoding = "utf-8").read(),
@@ -19,6 +19,7 @@ setup(
     author_email = "scottsloan@petalmail.com",
 
     packages = find_packages(),
+    include_package_data = True,
     install_requires = ["click", "requests", "colorama"],
     platforms = "any",
     python_requires = ">=3.6",

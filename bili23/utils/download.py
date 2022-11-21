@@ -15,12 +15,12 @@ class Downloader:
         self.total_size = 0
 
     def add_url(self, info: dict):
-        path = os.path.join(Config.download_path, info["file_name"])
+        path = os.path.join(Config.dir, info["file_name"])
 
         file_size = self.get_total_size(info["url"], info["referer_url"], path)
         self.total_size += file_size
 
-        for chunk_list in self.calc_chunk(file_size, Config.max_thread):
+        for chunk_list in self.calc_chunk(file_size, Config.thread):
             url, referer_url = info["url"], info["referer_url"]
 
             Thread(target = self.range_download, args = (url, referer_url, path, chunk_list, )).start()

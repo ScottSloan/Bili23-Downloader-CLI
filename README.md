@@ -62,6 +62,7 @@ bili23 [OPTIONS]
 | --codec | 指定下载的视频编码，默认为 HEVC (HEVC/H.265) |
 | --quiet | 静默输出 |
 | --a, --all | 下载全部视频 |
+| --edit-config | 编辑本地配置文件 |
 | --v, --version | 显示版本信息 |
 | --h, --help | 显示帮助信息 |
 
@@ -98,6 +99,8 @@ bili23 --i "BV1fd4y117xT"
 | --q, --quality | 指定下载的清晰度，默认为 80 (1080P) |
 | --codec | 指定下载的视频编码，默认为 HEVC (HEVC/H.265) |
 | --a, --all | 下载全部视频 |
+
+> 不指定参数时，程序将使用本地配置文件内的设置，有关配置文件的设置，请看[这里](#配置文件)
 
 示例
 ```
@@ -143,12 +146,38 @@ bili23 --p "BV1fd4y117xT" --a
 | HEVC/H.265 | HEVC |
 | AV1 | AV1 |
 
+### 配置文件
+使用以下命令编辑本地配置文件
+
+```
+bili23 --edit-config
+```
+[![zeuc8K.png](https://s1.ax1x.com/2022/11/17/zeuc8K.png)](https://imgse.com/i/zeuc8K)
+
+配置文件参数说明
+| 参数 | 说明 | 默认值 |
+| ---- | ---- | ---- |
+| dir | 下载目录 | null (不指定时为当前运行目录) |
+| thread | 下载线程数 | 4 |
+| quality | 视频清晰度 | 80 |
+| codec | 视频编码 | HEVC |
+| sessdata | Cookie SESSDATA 字段 | null |
+
+### 关于 Cookie SESSDATA 字段
+此字段含用户大会员信息，可用于下载大会员视频
+
+获取方法
+
+> 浏览器登录B站 -> 开发人员工具 -> 应用程序 -> Cookie -> SESSDATA
+
+[![zQDwnK.png](https://s1.ax1x.com/2022/11/21/zQDwnK.png)](https://imgse.com/i/zQDwnK)
+
 # 更新日志
-### Version 1.04 (2022-11-15)
+### Version 1.05 (2022-11-21)
 本次更新内容如下：
-* 支持 `--quiet` 参数 (静默输出)
-* 下载时显示文件大小和序号
-* 更新 `pypi` 仓库描述
+* 支持使用配置文件
+* 支持下载大会员视频
+* 修复部分已知问题
 
 # 联系方式
 Email: scottsloan@petalmail.com  

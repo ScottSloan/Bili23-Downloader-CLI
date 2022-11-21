@@ -17,23 +17,23 @@ class DownloadUtils:
 
         self.download_list = []
 
-    def get_video_durl(self, referer_url, bvid, cid, quality_id):
+    def get_video_durl(self, referer_url, bvid, cid, quality_id, badge = None):
         try:
             if self.type == "video":
                 url = "https://api.bilibili.com/x/player/playurl?bvid={}&cid={}&qn=0&fnver=0&fnval=4048&fourk=1".format(bvid, cid)
 
-                request = requests.get(url, headers = get_header(referer_url, Config.user_sessdata))
+                request = requests.get(url, headers = get_header(referer_url, Config.sessdata))
                 request_json = json.loads(request.text)
                 json_dash = request_json["data"]["dash"]
 
             elif self.type == "bangumi":
                 url = "https://api.bilibili.com/pgc/player/web/playurl?bvid={}&cid={}&qn=0&fnver=0&fnval=4048&fourk=1".format(bvid, cid)
 
-                request = requests.get(url, headers = get_header(referer_url, Config.user_sessdata))
+                request = requests.get(url, headers = get_header(referer_url, Config.sessdata))
                 request_json = json.loads(request.text)
                 json_dash = request_json["result"]["dash"]
         except:
-            self.onError(401)
+            self.onError(401, badge)
 
         Info.quality = json_dash["video"][0]["id"] if json_dash["video"][0]["id"] < quality_id else quality_id
 
@@ -62,13 +62,14 @@ class DownloadUtils:
 
         return [video_info, audio_info]
     
-    def get_download_info(self, url, title, bvid, cid, type):
+    def get_download_info(self, url, title, bvid, cid, badge, type):
         return {
             "url": url,
             "title": title,
             "bvid": bvid,
             "cid": cid,
-            "quality_id": Config.default_quality,
+            "quality_id": Config.quality,
+            "badge": badge,
             "tpye": type
         }
 
@@ -109,7 +110,7 @@ class DownloadUtils:
             BangumiInfo.down_episodes = BangumiInfo.episodes
 
         for i in BangumiInfo.down_episodes:
-            info = self.get_download_info(BangumiInfo.url, format_bangumi_title(i), i["bvid"], i["cid"], "bangumi")
+            info = self.get_download_info(BangumiInfo.url, format_bangumi_title(i), i["bvid"], i["cid"], i["badge"], "bangumi")
 
             self.download_list.append(info)
 
@@ -117,7 +118,7 @@ class DownloadUtils:
         quality_temp = dict(map(reversed, quality_wrap.items()))
         codec_temp = {"AVC": "AVC/H.264", "HEVC": "HEVC/H.265", "AV1": "AV1"}
 
-        print("当前清晰度：{}   当前编码：{}\n".format(quality_temp[Config.default_quality], codec_temp[Config.codec]))
+        print("当前清晰度：{}   当前编码：{}\n".format(quality_temp[Config.quality], codec_temp[Config.codec]))
         print("准备开始下载...\n")
 
         download_count = len(self.download_list)
@@ -127,7 +128,7 @@ class DownloadUtils:
             
             downloader = Downloader(self.onDownload)
 
-            download_list = self.get_video_durl(episode["url"], episode["bvid"], episode["cid"], episode["quality_id"])
+            download_list = self.get_video_durl(episode["url"], episode["bvid"], episode["cid"], episode["quality_id"], episode["badge"])
 
             print("\r[{}/{}] 正在下载：{}".format(index + 1, download_count, title), flush = True)
 
@@ -148,20 +149,20 @@ class DownloadUtils:
 
         legal_title = get_legal_name(title)
 
-        cmd = f'''cd {Config.download_path} && ffmpeg -v quiet -i audio.mp3 -i video.mp4 -acodec copy -vcodec copy "{legal_title}.mp4"'''
+        cmd = f'''cd {Config.dir} && ffmpeg -v quiet -i audio.mp3 -i video.mp4 -acodec copy -vcodec copy "{legal_title}.mp4"'''
             
         merge_process = subprocess.Popen(cmd, shell = True)
         merge_process.wait()
 
-        remove_files(Config.download_path, ["video.mp4", "audio.mp3"])
+        remove_files(Config.dir, ["video.mp4", "audio.mp3"])
     
         self.clear_line()
 
     def clear_line(self):
         width = os.get_terminal_size().columns
 
-        print("\r{}".format(" " * (width - 2)), end = "", flush = True)
+        print("\r{}".format(" " * width), end = "", flush = True)
         print("\r", end = "", flush = True)
 
     def onDownload(self, progress, speed, size):
-        print("\r{}% | {}{}  |  {}   {}".format(progress, "█" * (progress // 4), " " * (25 - progress // 4), speed, size), end = "", flush = True)
+        print("\r{}% | {}{}  |  {}   {}".format(progress, "█" * (progress // 5), " " * (20 - progress // 5), speed, size), end = "", flush = True)
