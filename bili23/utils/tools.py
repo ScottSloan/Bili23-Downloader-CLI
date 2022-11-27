@@ -1,6 +1,7 @@
 import re
 import os
 import json
+import math
 import requests
 
 from .config import Config
@@ -44,6 +45,30 @@ def format_size(size: int) -> str:
     else:
         return "{:.1f} KB".format(size)
 
+def get_file_from_url(url, name, subtitle = False):
+    request = requests.get(url, headers = get_header())
+    request.encoding = "utf-8"
+    
+    with open(os.path.join(Config.dir, get_legal_name(name)), "w", encoding = "utf-8") as f:
+        if subtitle:
+            f.write(convert_json_to_srt(request.text))
+        else:
+            f.write(request.text)
+
+def convert_json_to_srt(data):
+    json_data = json.loads(data)
+
+    file = ""
+
+    for index, value in enumerate(json_data["body"]):
+        file += "{}\n".format(index)
+        start = value["from"]
+        end = value["to"]
+        file += format_subtitle_timetag(start, False) + " --> " + format_subtitle_timetag(end, True) + "\n"
+        file += value["content"] + "\n\n"
+    
+    return file
+
 def find_str(pattern: str, string: str):
     if len(re.findall(pattern, string)) != 0: return True
     else: return False
@@ -73,3 +98,15 @@ def format_duration(duration: int):
     secs = int(duration - hours * 3600 - mins * 60)
     
     return str(hours).zfill(2) + ":" + str(mins).zfill(2) + ":" + str(secs).zfill(2) if hours != 0 else str(mins).zfill(2) + ":" + str(secs).zfill(2)
+
+def format_subtitle_timetag(timetag, end):
+    hours = math.floor(timetag) // 3600
+    mins = (math.floor(timetag) - hours * 3600) // 60
+    secs = math.floor(timetag) - hours * 3600 - mins * 60
+
+    if not end:
+        msecs = int(math.modf(timetag)[0] * 100)
+    else:
+        msecs = abs(int(math.modf(timetag)[0] * 100 -1))
+
+    return str(hours).zfill(2) + ":" + str(mins).zfill(2) + ":" + str(secs).zfill(2) + "," + str(msecs).zfill(2)

@@ -5,27 +5,28 @@ Bili23 Downloader CLI 命令行版本
 
 下载 Bilibili 视频/番剧/电影/纪录片 等资源
 
+### **导航**
 + [使用说明](#使用说明)
-+ [开发日志](#开发日志)
++ [更新日志](#更新日志)
 + [联系方式](#联系方式)
 
-### Bili23 Downloader 系列
-* [GUI 桌面端版本](https://github.com/ScottSloan/Bili23-Downloader)
-* CLI 命令行版本
+### **Bili23 Downloader 系列**
+* [GUI 桌面端版本](https://github.com/ScottSloan/Bili23-Downloader) (主项目，并行开发)
+* CLI 命令行版本 (本项目)
 
 # 使用说明
 ## 安装
-### 使用 pip 安装
+### **安装主程序**
 终端中执行以下命令
 
 ```
 pip install bili23
 ```
 
-### 安装 ffmpeg
+### **安装 ffmpeg**
 由于 `dash` 格式视频依赖 `ffmpeg` 进行合成，需事先安装
 
-### Windows 用户请按照下面的步骤安装  
+### **Windows 用户请按照下面的步骤安装**  
 ffmpeg 下载地址：[蓝奏云](https://wwf.lanzout.com/iTYX00ft3u4h)  密码:h9ge  
 
 解压压缩包，记录 `ffmpeg` 所在文件夹的路径，按照以下步骤创建环境变量：
@@ -34,13 +35,14 @@ ffmpeg 下载地址：[蓝奏云](https://wwf.lanzout.com/iTYX00ft3u4h)  密码:
 
 详细步骤请看[这里](https://scott.o5g.top/index.php/archives/120/)
 
-### Linux 用户请执行以下命令安装  
+### **Linux 用户请执行以下命令安装**  
 
 ```
 sudo apt install ffmpeg
 ```
+
 ## 更新
-运行以下命令更新 Bili23 Downloader CLI：
+运行以下命令更新程序
 
 ```
 pip install bili23 --upgrade
@@ -59,26 +61,32 @@ bili23 [OPTIONS]
 | --d, --dir | 指定下载目录，默认为当前运行目录 |
 | --t, --thread | 指定下载线程数，默认为 4 个线程 |
 | --q, --quality | 指定下载的清晰度，默认为 80 (1080P) |
-| --codec | 指定下载的视频编码，默认为 HEVC (HEVC/H.265) |
+| --c, --codec | 指定下载的视频编码，默认为 HEVC (HEVC/H.265) |
+| --mode | 视频解析方式，默认为 html (网页解析) |
+| --danmaku | 下载弹幕 |
+| --subtitle | 下载字幕 |
+| --lyric | 下载歌词 |
 | --quiet | 静默输出 |
 | --a, --all | 下载全部视频 |
 | --edit-config | 编辑本地配置文件 |
 | --v, --version | 显示版本信息 |
 | --h, --help | 显示帮助信息 |
 
-### 支持输入的 URL 链接
+### **支持输入的 URL 链接**
 - 用户投稿类型视频链接
 - 剧集（番剧，电影，纪录片等）链接
 - 活动页链接
+- 音乐，歌单链接
 - b23.tv 短链接
 
-### 部分类型可直接输入编号
+### **部分类型可直接输入编号**
 - 视频 av、BV 号
 - 剧集 epid、md、ss 号
+- 音乐 au 号，歌单 am 号
 
 > **注意：URL 链接需加上双引号**
 
-### --i, --info 参数
+### **--i, --info 参数**
 打印输出视频信息
 
 示例
@@ -88,8 +96,8 @@ bili23 --i "BV1fd4y117xT"
 
 [![zi2yd0.png](https://s1.ax1x.com/2022/11/12/zi2yd0.png)](https://imgse.com/i/zi2yd0)
 
-### --p, --parse 参数
-解析视频链接并下载
+### **--p, --parse 参数**
+解析 URL 链接并下载
 
 以下为可选参数
 | 参数 | 说明 |
@@ -97,7 +105,11 @@ bili23 --i "BV1fd4y117xT"
 | --d, --dir | 指定下载目录，默认为当前运行目录 |
 | --t, --thread | 指定下载线程数，默认为 4 个线程 |
 | --q, --quality | 指定下载的清晰度，默认为 80 (1080P) |
-| --codec | 指定下载的视频编码，默认为 HEVC (HEVC/H.265) |
+| --c, --codec | 指定下载的视频编码，默认为 HEVC (HEVC/H.265) |
+| --mode | 视频解析方式，默认为 html (网页解析) |
+| --danmaku | 下载弹幕 |
+| --subtitle | 下载字幕 |
+| --lyric | 下载歌词 |
 | --a, --all | 下载全部视频 |
 
 > 不指定参数时，程序将使用本地配置文件内的设置，有关配置文件的设置，请看[这里](#配置文件)
@@ -123,7 +135,7 @@ bili23 --p "BV1fd4y117xT" --a
 
 [![ziRHns.png](https://s1.ax1x.com/2022/11/12/ziRHns.png)](https://imgse.com/i/ziRHns)
 
-### --q, --quality 参数
+### **--q, --quality 参数**
 指定下载的清晰度，默认为 80
 | 描述 | 清晰度 |
 | ---- | ---- |
@@ -138,7 +150,9 @@ bili23 --p "BV1fd4y117xT" --a
 | 清晰 480P | 32 |
 | 流畅 360P | 16 |
 
-### --codec 参数
+> 我们强烈建议您使用 Cookie，以避免无法下载 1080P 和大会员视频的情况，有关 Cookie 的使用，请看[这里](#关于-cookie-sessdata-字段)
+
+### **--c, --codec 参数**
 指定下载的视频编码，默认为 HEVC
 | 类型 | 编码 |
 | ---- | ---- |
@@ -146,7 +160,7 @@ bili23 --p "BV1fd4y117xT" --a
 | HEVC/H.265 | HEVC |
 | AV1 | AV1 |
 
-### 配置文件
+### **配置文件**
 使用以下命令编辑本地配置文件
 
 ```
@@ -159,11 +173,18 @@ bili23 --edit-config
 | ---- | ---- | ---- |
 | dir | 下载目录 | null (不指定时为当前运行目录) |
 | thread | 下载线程数 | 4 |
+| mode | 视频解析方式 | html |
 | quality | 视频清晰度 | 80 |
 | codec | 视频编码 | HEVC |
 | sessdata | Cookie SESSDATA 字段 | null |
 
-### 关于 Cookie SESSDATA 字段
+### **关于视频解析方式**
+| 方式 | 说明 |
+| ---- | ---- |
+| html | 网页解析，可免登录下载部分 1080P 视频 |
+| api | API 接口解析，需登录使用，否则仅能下载 480P 视频 |
+
+### **关于 Cookie SESSDATA 字段**
 此字段含用户大会员信息，可用于下载大会员视频
 
 获取方法
@@ -173,11 +194,20 @@ bili23 --edit-config
 [![zQDwnK.png](https://s1.ax1x.com/2022/11/21/zQDwnK.png)](https://imgse.com/i/zQDwnK)
 
 # 更新日志
-### Version 1.05 (2022-11-21)
+### **Version 1.10 (2022-11-27)**
 本次更新内容如下：
-* 支持使用配置文件
-* 支持下载大会员视频
-* 修复部分已知问题
+* 支持下载音乐，歌单
+* 支持弹幕，字幕，歌词下载
+* 新增网页解析方式
+* 更新请求头
+* 修复无法下载视频的问题
+* 修复配置文件问题
+
+说明：由于 Bilibili API 接口变动，原有接口在不登录的情况下只能获取到 480P 的视频，故新增网页解析方式，此方式仍可免登录下载部分 1080P 视频。
+
+因此我们强烈推荐您登录账号使用，以避免出现 1080P 视频无法下载的情况。
+
+您可以运行 `bili23 --edit-config` 修改配置文件。
 
 # 联系方式
 Email: scottsloan@petalmail.com  

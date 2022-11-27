@@ -2,9 +2,9 @@ import re
 import sys
 from io import StringIO
 
-
 from ..utils.video import VideoInfo
 from ..utils.bangumi import BangumiInfo
+from ..utils.audio import AudioInfo
 from ..utils.tools import *
 from ..utils.config import Config
 
@@ -14,7 +14,7 @@ def show_error_info(code, badge = None):
 
     elif code == 401:
         if Config.sessdata == "" and badge == "会员":
-            msg = '该视频需要大会员 Cookie 才能下载，请运行 "bili23 --edit--config" 添加'
+            msg = '该视频需要大会员 Cookie 才能下载，请运行 "bili23 --edit-config" 添加'
         else:
             msg = "无法获取视频下载地址"
 
@@ -78,6 +78,31 @@ def show_bangumi_info():
     if Config.show_quality_list:
         show_quality_info(BangumiInfo.quality_desc)
 
+def show_audio_info():
+    if Config.download_all:
+        return
+    
+    if AudioInfo.playlist:
+        print("歌单信息：\n", flush = True)
+    else:
+        print("音乐信息：\n", flush = True)
+
+    print("名称：" + AudioInfo.title)
+    
+    if not AudioInfo.playlist:
+        print("作者：" + AudioInfo.author)
+
+    print("\n简介：" + AudioInfo.intro)
+
+    print("\n播放：" + AudioInfo.play)
+
+    if not AudioInfo.playlist:
+        print("投币：" + AudioInfo.coin)
+        
+    print("收藏：" + AudioInfo.collect)
+    print("分享：" + AudioInfo.share)
+    print("评论：{}\n".format(AudioInfo.comment))
+
 def show_quality_info(quality_list):
     print("可用清晰度列表：")
 
@@ -106,6 +131,24 @@ def get_episodes_selection(episodes_list):
 
     return int(pages_selection)
 
+def get_audio_selection(audio_list):
+    print("\n歌单 (共 {} 首)\n   ".format(AudioInfo.count), end = '', flush = True)
+    print("\n   ".join(audio_list))
+
+    while True:
+        audio_selection = input("\n请选择要下载的音乐（填序号，0 为全部下载）：")
+        result = re.findall("^\d*$", audio_selection)
+
+        if len(result) == 0 or result[0] == "" or int(result[0]) not in range(0, AudioInfo.count + 1):
+            print("\033[31m输入无效，请重试\033[0m")
+
+        else:
+            break
+    
+    print()
+
+    return int(audio_selection)
+
 def show_episodes_selection(type):
     if type == "video":
         if VideoInfo.collection:
@@ -116,6 +159,11 @@ def show_episodes_selection(type):
         episodes_list = ["{}.{} {}".format(index + 1, format_bangumi_title(value), "({})".format(value["badge"]) if value["badge"] != "" else "") for index, value in enumerate(BangumiInfo.episodes)]
     
     return 0 if Config.download_all else get_episodes_selection(episodes_list)
+
+def show_audio_selection():
+    audio_list = ["{}.{}".format(index + 1, value["title"]) for index, value in enumerate(AudioInfo.playlist)]
+    
+    return 0 if Config.download_all else get_audio_selection(audio_list)
 
 def show_qualiy_selection():
     quality_list = ["{}.{}".format(index + 1, value) for index, value in enumerate(BangumiInfo.quality_desc)]
