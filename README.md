@@ -62,7 +62,6 @@ bili23 [OPTIONS]
 | --t, --thread | 指定下载线程数，默认为 4 个线程 |
 | --q, --quality | 指定下载的清晰度，默认为 80 (1080P) |
 | --c, --codec | 指定下载的视频编码，默认为 HEVC (HEVC/H.265) |
-| --mode | 视频解析方式，默认为 html (网页解析) |
 | --danmaku | 下载弹幕 |
 | --subtitle | 下载字幕 |
 | --lyric | 下载歌词 |
@@ -106,7 +105,6 @@ bili23 --i "BV1fd4y117xT"
 | --t, --thread | 指定下载线程数，默认为 4 个线程 |
 | --q, --quality | 指定下载的清晰度，默认为 80 (1080P) |
 | --c, --codec | 指定下载的视频编码，默认为 HEVC (HEVC/H.265) |
-| --mode | 视频解析方式，默认为 html (网页解析) |
 | --danmaku | 下载弹幕 |
 | --subtitle | 下载字幕 |
 | --lyric | 下载歌词 |
@@ -173,16 +171,9 @@ bili23 --edit-config
 | ---- | ---- | ---- |
 | dir | 下载目录 | null (不指定时为当前运行目录) |
 | thread | 下载线程数 | 4 |
-| mode | 视频解析方式 | html |
 | quality | 视频清晰度 | 80 |
 | codec | 视频编码 | HEVC |
 | sessdata | Cookie SESSDATA 字段 | null |
-
-### **关于视频解析方式**
-| 方式 | 说明 |
-| ---- | ---- |
-| html | 网页解析，可免登录下载部分 1080P 视频 |
-| api | API 接口解析，需登录使用，否则仅能下载 480P 视频 |
 
 ### **关于 Cookie SESSDATA 字段**
 此字段含用户大会员信息，可用于下载大会员视频
@@ -194,20 +185,11 @@ bili23 --edit-config
 [![zQDwnK.png](https://s1.ax1x.com/2022/11/21/zQDwnK.png)](https://imgse.com/i/zQDwnK)
 
 # 更新日志
-### **Version 1.10 (2022-11-27)**
+### **Version 1.11 (2022-12-11)**
 本次更新内容如下：
-* 支持下载音乐，歌单
-* 支持弹幕，字幕，歌词下载
-* 新增网页解析方式
-* 更新请求头
-* 修复无法下载视频的问题
-* 修复配置文件问题
-
-说明：由于 Bilibili API 接口变动，原有接口在不登录的情况下只能获取到 480P 的视频，故新增网页解析方式，此方式仍可免登录下载部分 1080P 视频。
-
-因此我们强烈推荐您登录账号使用，以避免出现 1080P 视频无法下载的情况。
-
-您可以运行 `bili23 --edit-config` 修改配置文件。
+* 优化代码结构
+* 移除 html 解析方式，现在将以 api 接口方式解析视频
+* 修复部分已知问题
 
 # 联系方式
 Email: scottsloan@petalmail.com  

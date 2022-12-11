@@ -41,7 +41,7 @@ def parse(url, info = False):
 
         Info.type = "audio"
     else:
-        print("错误：无法识别的链接，请检查链接是否正确")
+        show_error_info(400)
 
     if info: return
 
@@ -75,7 +75,6 @@ def parse(url, info = False):
 @click.option("--t", "--thread", default = Config.thread, help = "指定下载所用线程数，默认为 4 个线程")
 @click.option("--q", "--quality", default = Config.quality, help = "指定下载的清晰度，默认为 80 (1080P)")
 @click.option("--c", "--codec", default = Config.codec, help = "指定下载的视频编码，默认为 HEVC (HEVC/H.265)")
-@click.option("--mode", default = Config.mode, help = "视频解析方式，默认为 html (网页解析)")
 @click.option("--danmaku", is_flag = True, help = "下载弹幕")
 @click.option("--subtitle", is_flag = True, help = "下载字幕")
 @click.option("--lyric", is_flag = True, help = "下载歌词")
@@ -83,7 +82,7 @@ def parse(url, info = False):
 @click.option("--a", "--all", is_flag = True, help = "下载全部视频")
 @click.option("--edit-config", is_flag = True, help = "编辑配置文件")
 @click.option("--v", "--version", callback = show_version_info, expose_value = False, is_eager = True, is_flag = True, help = "显示版本信息")
-def main(i, p, d, t, q, c, mode, danmaku, subtitle, lyric, quiet, a, edit_config):
+def main(i, p, d, t, q, c, danmaku, subtitle, lyric, quiet, a, edit_config):
     check_ffmpeg_available()
     
     Config.dir = d
@@ -91,7 +90,6 @@ def main(i, p, d, t, q, c, mode, danmaku, subtitle, lyric, quiet, a, edit_config
     Config.download_all = a
     Config.quality = q
     Config.codec = c
-    Config.mode = mode
     Config.danmaku = danmaku
     Config.subtitle = subtitle
     Config.lyric = lyric

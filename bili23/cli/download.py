@@ -7,6 +7,7 @@ from ..utils.bangumi import BangumiInfo
 from ..utils.audio import AudioInfo
 from ..utils.tools import *
 from ..utils.download import Downloader
+from ..utils.api import API
 
 class Info:
     quality = 0
@@ -17,54 +18,31 @@ class DownloadUtils:
 
         self.download_list = []
 
-    @property
-    def video_durl_api(self):
-        return "https://api.bilibili.com/x/player/playurl?bvid={}&cid={}&qn=0&fnver=0&fnval=4048&fourk=1".format(self.info["bvid"], self.info["cid"])
-
-    @property
-    def bangumi_durl_api(self):
-        return  "https://api.bilibili.com/pgc/player/web/playurl?bvid={}&cid={}&qn=0&fnver=0&fnval=4048&fourk=1".format(self.info["bvid"], self.info["cid"])
-
-    @property
-    def audio_durl_api(self):
-        return "https://www.bilibili.com/audio/music-service-c/web/url?sid={}".format(self.info["sid"])
-
-    @property
-    def get_full_url(self):
-        return "https://www.bilibili.com/video/" + self.info["bvid"]
-
     def get_video_durl_via_api(self):
-        type = self.info["type"]
-
         try:
-            if type == "video":
-                request = requests.get(self.video_durl_api, headers = get_header(self.info["url"], Config.sessdata))
-            elif type == "bangumi":
-                request = requests.get(self.bangumi_durl_api, headers = get_header(self.info["url"], Config.sessdata))
+            if self.type == "video":
+                url = API.Video.download_api(self.info["bvid"], self.info["cid"])
+
+                request = requests.get(url, headers = get_header(cookie = Config.sessdata))
+                
+                request_json = json.loads(request.text)
+                json_dash = request_json["data"]["dash"]
+
+            elif self.type == "bangumi":
+                url = API.Bangumi.download_api(self.info["bvid"], self.info["cid"])
+
+                request = requests.get(url, headers = get_header(self.info["url"], Config.sessdata))
         
-            request_json = json.loads(request.text)
-            json_dash = request_json["result"]["dash"]
+                request_json = json.loads(request.text)
+                json_dash = request_json["result"]["dash"]
 
         except:
             self.onError(401, self.info["badge"])
 
-
         return json_dash
 
-    def get_video_durl_via_html(self):
-        re_pattern = r"window.__playinfo__=(.*?)</script>"
-        
-        request = requests.get(self.get_full_url, headers = get_header(self.info["url"], Config.sessdata))
-
-        json_raw = re.findall(re_pattern, request.text, re.S)[0]
-
-        return json.loads(json_raw)["data"]["dash"]
-
     def get_video_durl(self, quality_id):
-        if Config.mode == "api":
-            json_dash = self.get_video_durl_via_api()
-        elif Config.mode == "html":
-            json_dash = self.get_video_durl_via_html()
+        json_dash = self.get_video_durl_via_api()
 
         Info.quality = json_dash["video"][0]["id"] if json_dash["video"][0]["id"] < quality_id else quality_id
 
@@ -77,7 +55,9 @@ class DownloadUtils:
         return self.get_video_durl_list()
 
     def get_audio_durl(self):
-        audio_request = requests.get(self.audio_durl_api, headers = get_header(self.info["url"]))
+        url = API.Audio.download_api(self.info["sid"])
+
+        audio_request = requests.get(url, headers = get_header(self.info["url"]))
         audio_json = json.loads(audio_request.text)
 
         self.audio_durl = audio_json["data"]["cdns"][0]
@@ -252,16 +232,17 @@ class DownloadUtils:
         if not Config.danmaku:
             return
         
-        durl = "https://api.bilibili.com/x/v1/dm/list.so?oid={}".format(self.info["cid"])
+        url = API.URL.danmaku_api(self.info["cid"])
 
-        get_file_from_url(durl, "{}.xml".format(self.info["title"]))
+        get_file_from_url(url, "{}.xml".format(self.info["title"]))
 
     def get_subtitle(self):
         if not Config.subtitle:
             return
 
-        subtitle_url = "https://api.bilibili.com/x/player.so?id=cid:{}&bvid={}".format(self.info["cid"], self.info["bvid"])
-        req = requests.get(subtitle_url, headers = get_header())
+        url = API.URL.subtitle_api(self.info["cid"], self.info["bvid"])
+
+        req = requests.get(url, headers = get_header())
 
         subtitle_raw = re.findall(r'<subtitle>(.*?)</subtitle>', req.text)[0]
         subtitle_json = json.loads(subtitle_raw)["subtitles"]
