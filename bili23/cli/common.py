@@ -4,7 +4,6 @@ from io import StringIO
 
 from ..utils.video import VideoInfo
 from ..utils.bangumi import BangumiInfo
-from ..utils.audio import AudioInfo
 from ..utils.tools import *
 from ..utils.config import Config
 
@@ -26,13 +25,13 @@ def show_version_info(ctx, param, value):
     if not value or ctx.resilient_parsing:
         return
 
-    print("{}\n".format(Config.app_name))
+    print("{}\n".format(Config.APP.name))
 
     print("下载 Bilibili 视频/番剧/电影/纪录片 等资源\n")
 
-    print("当前版本：{}".format(Config.app_version))
-    print("发布日期：{}".format(Config.app_date))
-    print("项目主页：{}".format(Config.app_website))
+    print("当前版本：{}".format(Config.APP.version))
+    print("发布日期：{}".format(Config.APP.release_date))
+    print("项目主页：{}".format(Config.APP.homepage))
     print("开发者：Scott Sloan\n")
 
     print("本程序遵循 MIT 开源协议。\n")
@@ -55,11 +54,11 @@ def show_video_info():
     print("收藏：" + VideoInfo.favorite)
     print("评论：{}\n".format(VideoInfo.reply))
 
-    if Config.show_quality_list:
+    if Config.Argument.show_quality_list:
         show_quality_info(VideoInfo.quality_desc)
 
 def show_bangumi_info():
-    if Config.download_all:
+    if Config.Argument.download_all:
         return
 
     print("视频信息：\n", flush = True)
@@ -75,39 +74,14 @@ def show_bangumi_info():
     print("收藏：" + BangumiInfo.favorite)
     print("评分：{}\n".format(BangumiInfo.score))
 
-    if Config.show_quality_list:
+    if Config.Argument.show_quality_list:
         show_quality_info(BangumiInfo.quality_desc)
-
-def show_audio_info():
-    if Config.download_all:
-        return
-    
-    if AudioInfo.playlist:
-        print("歌单信息：\n", flush = True)
-    else:
-        print("音乐信息：\n", flush = True)
-
-    print("名称：" + AudioInfo.title)
-    
-    if not AudioInfo.playlist:
-        print("作者：" + AudioInfo.author)
-
-    print("\n简介：" + AudioInfo.intro)
-
-    print("\n播放：" + AudioInfo.play)
-
-    if not AudioInfo.playlist:
-        print("投币：" + AudioInfo.coin)
-        
-    print("收藏：" + AudioInfo.collect)
-    print("分享：" + AudioInfo.share)
-    print("评论：{}\n".format(AudioInfo.comment))
 
 def show_quality_info(quality_list):
     print("可用清晰度列表：")
 
     for index, value in enumerate(quality_list):
-        print("{}.{} ({})".format(index + 1, value, quality_wrap[value]))
+        print("{}.{} ({})".format(index + 1, value, quality_map[value]))
 
     print()
 
@@ -131,24 +105,6 @@ def get_episodes_selection(episodes_list):
 
     return int(pages_selection)
 
-def get_audio_selection(audio_list):
-    print("\n歌单 (共 {} 首)\n   ".format(AudioInfo.count), end = '', flush = True)
-    print("\n   ".join(audio_list))
-
-    while True:
-        audio_selection = input("\n请选择要下载的音乐（填序号，0 为全部下载）：")
-        result = re.findall("^\d*$", audio_selection)
-
-        if len(result) == 0 or result[0] == "" or int(result[0]) not in range(0, AudioInfo.count + 1):
-            print("\033[31m输入无效，请重试\033[0m")
-
-        else:
-            break
-    
-    print()
-
-    return int(audio_selection)
-
 def show_episodes_selection(type):
     if type == "video":
         if VideoInfo.collection:
@@ -159,11 +115,6 @@ def show_episodes_selection(type):
         episodes_list = ["{}.{} {}".format(index + 1, format_bangumi_title(value), "({})".format(value["badge"]) if value["badge"] != "" else "") for index, value in enumerate(BangumiInfo.episodes)]
     
     return 0 if Config.download_all else get_episodes_selection(episodes_list)
-
-def show_audio_selection():
-    audio_list = ["{}.{}".format(index + 1, value["title"]) for index, value in enumerate(AudioInfo.playlist)]
-    
-    return 0 if Config.download_all else get_audio_selection(audio_list)
 
 def show_qualiy_selection():
     quality_list = ["{}.{}".format(index + 1, value) for index, value in enumerate(BangumiInfo.quality_desc)]
@@ -181,28 +132,23 @@ def show_qualiy_selection():
             break
 
 def check_ffmpeg_available(exit = False):
-    if not Config.ffmpeg_available:
-        if Config.platform.startswith("Windows"):
+    if not Config.Download.ffmpeg_available:
+        if Config.APP.platform.startswith("Windows"):
             detail = "请访问项目主页查看安装方法"
         else:
             detail = '请执行 "sudo apt install ffmpeg" 命令安装'
 
-        print("\033[33m\nNotice: 尚未安装 ffmpeg，{}\n项目地址：{}\n\033[0m".format(detail, Config.app_website))
-
-        if exit: 
-            remove_files(Config.dir, ["video.mp4", "audio.mp3"])
-
-            sys.exit()
+        print("\033[33m\nNotice: 尚未安装 ffmpeg，{}\n项目地址：{}\n\033[0m".format(detail, Config.APP.homepage))
 
 def check_arguments():
-    if Config.quiet:
+    if Config.Argument.quiet:
         sys.stdout = StringIO()
 
-    if Config.edit:
-        if Config.platform.startswith("Windows"):
-            os.startfile(Config.config_path)
+    if Config.Argument.edit:
+        if Config.APP.platform.startswith("Windows"):
+            os.startfile(Config)
         else:
-            os.system('xdg-open "{}"'.format(Config.config_path))
+            os.system('xdg-open "{}"'.format(Config))
 
         sys.exit()
         
@@ -212,11 +158,11 @@ def check_arguments():
 
     check_codec()
 
-    if not os.path.exists(Config.dir):
-        os.makedirs(Config.dir)
+    if not os.path.exists(Config.Download.path):
+        os.makedirs(Config.Download.path)
 
 def check_quality():
-    if Config.quality not in list(quality_wrap.values()):
+    if Config.Download.quality not in list(quality_map.values()):
         print("\033[33mWaning: 清晰度参数无效\n\033[0m")
         
         print("可用的清晰度：")
@@ -238,14 +184,14 @@ def check_quality():
         sys.exit()
 
 def check_thread():
-    if Config.thread < 1 or Config.thread > 16:
+    if Config.Download.max_thread < 1 or Config.Download.max_thread > 8:
         print("\033[33mWarning: 线程参数无效\n\033[0m")
 
-        print("线程数应在 1 - 16 之间")
+        print("线程数应在 1 - 8 之间")
         sys.exit()
 
 def check_codec():
-    if Config.codec not in list(codec_wrap.keys()):
+    if Config.Download.codec not in list(codec_map.values()):
         print("\033[33mWarning: 视频编码参数无效\n\033[0m")
 
         print("可用的视频编码：")

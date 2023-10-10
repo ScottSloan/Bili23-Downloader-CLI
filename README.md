@@ -11,7 +11,7 @@ Bili23 Downloader CLI 命令行版本
 + [联系方式](#联系方式)
 
 ### **Bili23 Downloader 系列**
-* [GUI 桌面端版本](https://github.com/ScottSloan/Bili23-Downloader) (主项目，并行开发)
+* [GUI 桌面端版本](https://github.com/ScottSloan/Bili23-Downloader) (主项目)
 * CLI 命令行版本 (本项目)
 
 # 使用说明

@@ -47,7 +47,7 @@ class DownloadUtils:
         Info.quality = json_dash["video"][0]["id"] if json_dash["video"][0]["id"] < quality_id else quality_id
 
         temp_video_durl = [i["baseUrl"] for i in json_dash["video"] if i["id"] == Info.quality]
-        self.video_durl = temp_video_durl[codec_wrap[Config.codec]] if len(temp_video_durl) > 1 else temp_video_durl[0]
+        self.video_durl = temp_video_durl[codec_map[Config.codec]] if len(temp_video_durl) > 1 else temp_video_durl[0]
         
         temp_audio_durl = sorted(json_dash["audio"], key = lambda x: x["id"], reverse = True)
         self.audio_durl = [i for i in temp_audio_durl if (i["id"] - 30200) == Info.quality or (i["id"] - 30200) < Info.quality][0]["baseUrl"]
@@ -167,7 +167,7 @@ class DownloadUtils:
             self.download_list.append(info)
 
     def start_download(self):
-        quality_temp = dict(map(reversed, quality_wrap.items()))
+        quality_temp = dict(map(reversed, quality_map.items()))
         codec_temp = {"AVC": "AVC/H.264", "HEVC": "HEVC/H.265", "AV1": "AV1"}
 
         if self.type != "audio":
