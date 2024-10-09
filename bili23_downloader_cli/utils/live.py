@@ -3,7 +3,7 @@ import json
 import requests
 
 from .config import Config
-from .tools import *
+from bili23_downloader_cli.utils.tools import get_header, get_proxy
 
 class LiveInfo:
     id = room_id = live_status = 0
@@ -25,7 +25,7 @@ class LiveParser:
     def get_id(self, url: str):
         try:
             LiveInfo.id = re.findall(r"com/[0-9]*", url)[0][4:]
-        except:
+        except Exception:
             self.onError(400)
 
     def get_live_info(self):
