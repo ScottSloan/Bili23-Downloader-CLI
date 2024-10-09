@@ -2,9 +2,9 @@ import re
 import requests
 import json
 
-from .tools import *
-from .config import Config
-from .api import API
+from bili23_downloader_cli.utils.tools import get_header
+from bili23_downloader_cli.utils.config import Config
+from bili23_downloader_cli.utils import api
 
 class VideoInfo:
     url = bvid = ""
@@ -34,7 +34,7 @@ class VideoParser:
     def get_aid(self, url):
         VideoInfo.aid = re.findall(r"av[0-9]*", url)[0][2:]
         
-        url = API.Video.aid_url_api(VideoInfo.aid)
+        url = api.aid_url_api(VideoInfo.aid)
 
         aid_request = requests.get(url, headers = get_header())
         aid_json = json.loads(aid_request.text)

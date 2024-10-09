@@ -2,13 +2,15 @@ import json
 import requests
 import subprocess
 
-from ..utils.video import VideoInfo
-from ..utils.bangumi import BangumiInfo
-from ..utils.audio import AudioInfo
-from ..utils.tools import *
-from ..utils.download import Downloader
-from ..utils.api import API
 
+from bili23_downloader_cli.utils.config import Config
+from bili23_downloader_cli.utils.tools import get_header,codec_map
+from bili23_downloader_cli.utils.video import VideoInfo
+from bili23_downloader_cli.utils.bangumi import BangumiInfo
+from bili23_downloader_cli.utils.audio import AudioInfo
+from bili23_downloader_cli.utils.download import Downloader
+from bili23_downloader_cli.utils import api
+from bili23_downloader_cli.utils.api import APIType
 class Info:
     quality = 0
 
@@ -21,7 +23,7 @@ class DownloadUtils:
     def get_video_durl_via_api(self):
         try:
             if self.type == "video":
-                url = API.Video.download_api(self.info["bvid"], self.info["cid"])
+                url = api.download_api(APIType,{"bvid":self.info["bvid"], "cid": self.info["cid"]})
 
                 request = requests.get(url, headers = get_header(cookie = Config.sessdata))
                 
@@ -29,14 +31,14 @@ class DownloadUtils:
                 json_dash = request_json["data"]["dash"]
 
             elif self.type == "bangumi":
-                url = API.Bangumi.download_api(self.info["bvid"], self.info["cid"])
+                url = api.download_api(APIType.Bangumi,{"bvid":self.info["bvid"],"cid": self.info["cid"]})
 
                 request = requests.get(url, headers = get_header(self.info["url"], Config.sessdata))
         
                 request_json = json.loads(request.text)
                 json_dash = request_json["result"]["dash"]
 
-        except:
+        except Exception:
             self.onError(401, self.info["badge"])
 
         return json_dash

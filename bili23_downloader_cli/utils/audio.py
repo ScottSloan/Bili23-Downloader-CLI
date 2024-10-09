@@ -2,8 +2,12 @@ import re
 import json
 import requests
 
-from .tools import *
-from .api import API
+from bili23_downloader_cli.utils.tools import (
+    format_data,
+    get_header
+)
+from bili23_downloader_cli.utils import api
+from bili23_downloader_cli.utils.api import APIType
 
 class AudioInfo:
     sid = amid = duration = count = 0
@@ -63,7 +67,7 @@ class AudioParser:
         AudioInfo.down_list = AudioInfo.playlist = []
 
     def get_playlist_info(self):
-        url = API.Audio.playlist_info_api(AudioInfo.amid)
+        url = api.info_api(APIType.AudioPlayList,{"amid":AudioInfo.amid})
 
         info_request = requests.get(url, headers = get_header())
         info_json = json.loads(info_request.text)
@@ -101,6 +105,6 @@ class AudioParser:
             self.get_audio_info()
     
     def check_json(self, json):  
-        if json["code"] != 0 or json["data"] == None:
+        if json["code"] != 0 or json["data"] is None:
             self.onError(400)
             

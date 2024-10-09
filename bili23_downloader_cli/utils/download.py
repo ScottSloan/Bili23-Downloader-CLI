@@ -4,7 +4,7 @@ import requests
 from threading import Thread
 
 from .config import Config
-from .tools import *
+from bili23_downloader_cli.utils.tools import get_header, format_size
 
 class Downloader:
     def __init__(self, onDownload):

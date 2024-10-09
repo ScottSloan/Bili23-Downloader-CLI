@@ -2,7 +2,7 @@ import re
 import requests
 import json
 
-from .tools import *
+from bili23_downloader_cli.utils.tools import format_data, get_header
 from .config import Config
 from .api import API
 
