@@ -3,8 +3,10 @@ import requests
 import json
 
 from bili23_downloader_cli.utils.tools import format_data, get_header
-from .config import Config
-from .api import API
+from bili23_downloader_cli.utils.config import Config
+from bili23_downloader_cli.utils import api
+from bili23_downloader_cli.utils.api import APIType
+
 
 class BangumiInfo:
     url = bvid = ""
@@ -12,8 +14,12 @@ class BangumiInfo:
     epid = ssid = mid = cid = 0
 
     title = desc = newep = type = ""
-    
-    view = coin = danmaku = favorite = score = 0
+
+    view = 0
+    coin = 0
+    danmaku = 0
+    favorite = 0
+    score = 0
 
     quality = 0
 
@@ -23,10 +29,11 @@ class BangumiInfo:
 
     sections = {}
 
+
 class BangumiParser:
-    def __init__(self, onError):
+    def __init__(self, onError: None):
         self.onError = onError
-    
+
     def get_epid(self, url: str):
         BangumiInfo.epid = re.findall(r"ep[0-9]*", url)[0][2:]
         self.argument, self.value = "ep_id", BangumiInfo.epid
@@ -38,24 +45,24 @@ class BangumiParser:
     def get_media_id(self, url: str):
         BangumiInfo.mid = re.findall(r"md[0-9]*", url)[0][2:]
 
-        url = API.Bangumi.mid_api(BangumiInfo.mid)
+        url = api.mid_api(BangumiInfo.mid)
 
-        media_request = requests.get(url, headers = get_header())
+        media_request = requests.get(url, headers=get_header())
         media_json = json.loads(media_request.text)
 
         self.check_json(media_json)
 
         BangumiInfo.ssid = media_json["result"]["media"]["season_id"]
         self.argument, self.value = "season_id", BangumiInfo.ssid
-    
-    def get_bangumi_info(self):
-        url = API.Bangumi.info_api(self.argument, self.value)
 
-        info_request = requests.get(url, headers = get_header())
+    def get_bangumi_info(self):
+        url = api.info_api(APIType.Bangumi, self.argument, self.value)
+
+        info_request = requests.get(url, headers=get_header())
         info_json = json.loads(info_request.text)
 
         self.check_json(info_json)
-        
+
         info_result = info_json["result"]
         BangumiInfo.url = info_result["episodes"][0]["link"]
         BangumiInfo.title = info_result["title"]
@@ -64,7 +71,7 @@ class BangumiParser:
 
         BangumiInfo.episodes = info_result["episodes"]
         BangumiInfo.sections["正片"] = BangumiInfo.episodes
-        
+
         info_stat = info_result["stat"]
         BangumiInfo.view = format_data(info_stat["views"])
         BangumiInfo.coin = format_data(info_stat["coins"])
@@ -73,7 +80,7 @@ class BangumiParser:
 
         if "rating" in info_result:
             BangumiInfo.score = str(info_result["rating"]["score"])
-        
+
         if "section" in info_result:
             info_section = info_result["section"]
 
@@ -107,11 +114,15 @@ class BangumiParser:
             BangumiInfo.type = "综艺"
 
     def get_bangumi_quality(self):
-        url = API.Bangumi.download_api(BangumiInfo.bvid, BangumiInfo.cid)
+        url = api.download_api(
+            APIType.Bangumi, bvid=BangumiInfo.bvid, cid=BangumiInfo.cid
+        )
 
-        bangumi_request = requests.get(url, headers = get_header(BangumiInfo.url, cookie = Config.sessdata))
+        bangumi_request = requests.get(
+            url, headers=get_header(BangumiInfo.url, cookie=Config.sessdata)
+        )
         bangumi_json = json.loads(bangumi_request.text)
-        
+
         self.check_json(bangumi_json)
 
         json_data = bangumi_json["result"]
@@ -126,11 +137,10 @@ class BangumiParser:
             self.get_season_id(url)
         elif "md" in url:
             self.get_media_id(url)
-        
+
         self.get_bangumi_info()
         self.get_bangumi_quality()
-        
+
     def check_json(self, json):
         if json["code"] != 0:
             self.onError(400)
-            

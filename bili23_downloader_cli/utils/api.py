@@ -1,8 +1,10 @@
 """
 统一放置需要用到的接口
 """
-from typing import Optional
+
+from typing import Any, Optional
 from enum import Enum, auto
+
 BASE_URL = "https://bilibili.com"
 BASE_API_URL = "https://api.bilibili.com"
 BASE_LIVE_API_URL = "https://api.live.bilibili.com"
@@ -11,6 +13,7 @@ BASE_QRLOGIN_URL = "https://passport.bilibili.com"
 
 class APIType(Enum):
     """视频分类"""
+
     Video = auto()
     Bangumi = auto()
     Audio = auto()
@@ -42,10 +45,11 @@ def subtitle_api(cid: str, bvid: str) -> str:
 def aid_url_api(aid: str) -> str:
     return f"{BASE_API_URL}/x/web-interface/archive/stat?aid={aid}"
 
+
 # def info_api(type:APIType, bvid: Optional[str] = None, argument: Optional[str] = None, value:Optional[str] = None, sid: Optional[str] = None, amid: Optional[str] = None) -> str:
 
 
-def info_api(type: APIType, **kwargs) -> str:
+def info_api(type: APIType, **kwargs: Any) -> str:
     match type:
         case APIType.Video:
             # if not bvid:
@@ -66,8 +70,9 @@ def info_api(type: APIType, **kwargs) -> str:
             return f"{BASE_LIVE_API_URL}/xlive/web-room/v1/index/getRoomBaseInfo?room_ids={kwargs.get("id")}&req_biz=web_room_componet"
         case APIType.Cheese:
             return f"{BASE_API_URL}/pugv/view/web/season?{kwargs.get("argument")}={kwargs.get("value")}"
-        case _:
+        case _:  # type: ignore
             raise NotImplementedError
+
 
 # TODO: 需要重新修改形参， 应该改成**kwargs的形式, 参数应该有调用它的方法传入
 
@@ -78,7 +83,7 @@ def download_api(
     cid: Optional[str] = None,
     sid: Optional[str] = None,
     avid: Optional[str] = None,
-    epid: Optional[str] = None
+    epid: Optional[str] = None,
 ) -> str:
     match type:
         case APIType.Video:
@@ -114,8 +119,10 @@ def qrcode_url_api() -> str:
     return f"{BASE_QRLOGIN_URL}/x/passport-login/web/qrcode/generate"
 
 
-def qrcode_status_api(qrcode_key) -> str:
-    return f"{BASE_QRLOGIN_URL}/x/passport-login/web/qrcode/poll?qrcode_key={qrcode_key}"
+def qrcode_status_api(qrcode_key: str) -> str:
+    return (
+        f"{BASE_QRLOGIN_URL}/x/passport-login/web/qrcode/poll?qrcode_key={qrcode_key}"
+    )
 
 
 def user_info_api() -> str:

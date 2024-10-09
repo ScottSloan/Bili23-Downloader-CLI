@@ -2,7 +2,10 @@ import re
 import os
 import json
 import math
+from typing import Any, Dict, List, Optional
 import requests
+
+from bili23_downloader_cli.utils.bangumi import BangumiInfo
 
 from .config import Config
 
@@ -32,13 +35,17 @@ def get_legal_name(name: str):
     return re.sub('[/\:*?"<>|]', "", name)
 
 
-def get_header(referer_url=None, cookie=None, chunk_list=None) -> dict:
+def get_header(
+    referer_url: Optional[str] = None,
+    cookie: Optional[str] = None,
+    chunk_list: Optional[List[str]] = None,
+) -> Dict[str, str]:
     """
     构建请求头
     """
     header = {
         "User-Agent": "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.84 Safari/537.36",
-        "Cookie": "CURRENT_FNVAL=4048"
+        "Cookie": "CURRENT_FNVAL=4048",
     }
 
     if referer_url:
@@ -53,7 +60,7 @@ def get_header(referer_url=None, cookie=None, chunk_list=None) -> dict:
     return header
 
 
-def remove_files(path: str, name: list):
+def remove_files(path: str, name: List[str]):
     for i in name:
         os.remove(os.path.join(path, i))
 
@@ -70,7 +77,7 @@ def format_size(size: int) -> str:
         return "{:.1f} KB".format(size)
 
 
-def get_file_from_url(url, name, subtitle=False):
+def get_file_from_url(url: str, name: str, subtitle: bool = False):
     request = requests.get(url, headers=get_header())
     request.encoding = "utf-8"
 
@@ -110,9 +117,7 @@ def find_str(pattern: str, string: str):
         return False
 
 
-def format_bangumi_title(episode):
-    from .bangumi import BangumiInfo
-
+def format_bangumi_title(episode: Dict[str, Any]):
     if BangumiInfo.type == "电影":
         return "{} {}".format(BangumiInfo.title, episode["title"])
     else:
@@ -128,7 +133,7 @@ def format_data(data: int) -> str:
         return str(data)
 
 
-def format_duration(duration: int):
+def format_duration(duration: int | float):
     if duration > 10000:
         duration = duration / 1000
 
@@ -163,11 +168,12 @@ def format_subtitle_timetag(timetag, end):
         + str(msecs).zfill(2)
     )
 
-def get_proxy():
+
+def get_proxy() -> Dict[str, str]:
     if Config.Proxy.proxy:
         return {
             "http": f"{Config.Proxy.ip}:{Config.Proxy.port}",
-            "https": f"{Config.Proxy.ip}:{Config.Proxy.port}"
+            "https": f"{Config.Proxy.ip}:{Config.Proxy.port}",
         }
     else:
         return {}

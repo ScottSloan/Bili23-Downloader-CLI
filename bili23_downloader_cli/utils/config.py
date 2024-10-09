@@ -2,6 +2,8 @@ import os
 import platform
 import subprocess
 from configparser import RawConfigParser
+from typing import Optional
+
 
 class Config:
     class APP:
@@ -19,13 +21,20 @@ class Config:
     class Proxy:
         proxy = auth = False
 
-        ip = port = uname = passwd = None
+        ip = None
+        port = None
+        uname = None
+        passwd = None
 
     class User:
         sessdata = None
 
     class Download:
-        path = max_thread = codec = quality = None
+        path: Optional[str] = None
+        max_thread: Optional[int] = None
+        codec: Optional[str] = None
+        quality: Optional[int] = None
+        """清晰度"""
 
         ffmpeg_available = False
         ffmpeg_path = None
@@ -33,22 +42,26 @@ class Config:
     class Type:
         VIDEO = 1
         BANGUMI = 2
-        
+
     class Argument:
         download_all = False
         show_quality_list = False
         quiet = False
         edit = False
 
+
 class Download:
     pass
 
+
 class ConfigUtils:
     def __init__(self):
-        self.path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "config.conf")
+        self.path = os.path.join(
+            os.path.abspath(os.path.dirname(__file__)), "config.conf"
+        )
 
         self.config = RawConfigParser()
-        self.config.read(self.path, encoding = "utf-8")
+        self.config.read(self.path, encoding="utf-8")
 
         self.load_config()
 
@@ -72,14 +85,22 @@ class ConfigUtils:
         Config.Proxy.passwd = self.config.get("proxy", "passwd")
 
     def save(self):
-        with open(self.path, "w", encoding = "utf-8") as f:
+        with open(self.path, "w", encoding="utf-8") as f:
             self.config.write(f)
 
     def check_ffmpeg_status(self):
-        process = subprocess.Popen(f'ffmpeg -version', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+        process = subprocess.Popen(
+            "ffmpeg -version",
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
         process.wait()
 
-        Config.Download.ffmpeg_available = True if "ffmpeg version" in str(process.stdout.read()) else False
+        Config.Download.ffmpeg_available = (
+            True if "ffmpeg version" in str(process.stdout.read()) else False
+        )
+
 
 conf = ConfigUtils()
 conf.load_config()

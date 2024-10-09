@@ -26,7 +26,7 @@ class Info:
     type = ""
 
 
-def parse(url, info=False):
+def parse(url: str, info: bool = False):
     if find_str("b23.tv", url):
         url = process_shortlink(url)
 
@@ -110,7 +110,9 @@ def parse(url, info=False):
     is_flag=True,
     help="显示版本信息",
 )
-def main(i, p, d, t, q, c, quiet, a, edit_config):
+def main(
+    i: str, p, d: str, t: int, q: int, c: str, quiet: bool, a: bool, edit_config: bool
+):
     check_ffmpeg_available()
 
     Config.Download.path = d
