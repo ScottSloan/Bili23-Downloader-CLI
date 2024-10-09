@@ -2,12 +2,10 @@ import re
 import json
 import requests
 
-from bili23_downloader_cli.utils.tools import (
-    format_data,
-    get_header
-)
+from bili23_downloader_cli.utils.tools import format_data, get_header
 from bili23_downloader_cli.utils import api
 from bili23_downloader_cli.utils.api import APIType
+
 
 class AudioInfo:
     sid = amid = duration = count = 0
@@ -20,17 +18,20 @@ class AudioInfo:
 
     isplaylist = False
 
+
 class AudioParser:
     def __init__(self, onError):
         self.onError = onError
 
     @property
     def playlist_api(self):
-        return "https://www.bilibili.com/audio/music-service-c/web/song/of-menu?sid={}&pn=1&ps=100".format(AudioInfo.amid)
+        return "https://www.bilibili.com/audio/music-service-c/web/song/of-menu?sid={}&pn=1&ps=100".format(
+            AudioInfo.amid
+        )
 
     def get_sid(self, url):
         result = re.findall(r"au[0-9]*", url)
-        AudioInfo.sid =  result[len(result) - 1][2:]
+        AudioInfo.sid = result[len(result) - 1][2:]
 
         AudioInfo.url = "https://www.bilibili.com/audio/au{}".format(AudioInfo.sid)
 
@@ -40,9 +41,9 @@ class AudioParser:
         AudioInfo.url = "https://www.bilibili.com/audio/am{}".format(AudioInfo.amid)
 
     def get_audio_info(self):
-        url = API.Audio.music_info_api(AudioInfo.sid)
+        url = api.info_api(APIType.Audio, {"sid": AudioInfo.sid})
 
-        audio_request = requests.get(url, headers = get_header())
+        audio_request = requests.get(url, headers=get_header())
         audio_json = json.loads(audio_request.text)
 
         self.check_json(audio_json)
@@ -61,22 +62,22 @@ class AudioParser:
 
         AudioInfo.duration = audio_json["data"]["duration"]
         AudioInfo.lyric = audio_json["data"]["lyric"]
-        
+
         AudioInfo.count = 1
         AudioInfo.isplaylist = False
         AudioInfo.down_list = AudioInfo.playlist = []
 
     def get_playlist_info(self):
-        url = api.info_api(APIType.AudioPlayList,{"amid":AudioInfo.amid})
+        url = api.info_api(APIType.AudioPlayList, {"amid": AudioInfo.amid})
 
-        info_request = requests.get(url, headers = get_header())
+        info_request = requests.get(url, headers=get_header())
         info_json = json.loads(info_request.text)
 
         self.check_json(info_json)
 
         AudioInfo.title = info_json["data"]["title"]
         AudioInfo.intro = info_json["data"]["intro"]
-        
+
         statistic = info_json["data"]["statistic"]
 
         AudioInfo.play = format_data(statistic["play"])
@@ -84,7 +85,7 @@ class AudioParser:
         AudioInfo.share = format_data(statistic["share"])
         AudioInfo.comment = format_data(statistic["comment"])
 
-        audio_request = requests.get(self.playlist_api, headers = get_header())
+        audio_request = requests.get(self.playlist_api, headers=get_header())
         audio_json = json.loads(audio_request.text)
 
         self.check_json(audio_json)
@@ -103,8 +104,7 @@ class AudioParser:
             self.get_sid(url)
 
             self.get_audio_info()
-    
-    def check_json(self, json):  
+
+    def check_json(self, json):
         if json["code"] != 0 or json["data"] is None:
             self.onError(400)
-            

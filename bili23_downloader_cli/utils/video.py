@@ -1,42 +1,59 @@
 import re
+from typing import Any, Dict
 import requests
 import json
 
-from bili23_downloader_cli.utils.tools import get_header
+from bili23_downloader_cli.utils.tools import format_data, get_header
 from bili23_downloader_cli.utils.config import Config
 from bili23_downloader_cli.utils import api
 
+
 class VideoInfo:
-    url = bvid = ""
-    
-    aid = cid = 0
+    url = ""
+    bvid = ""
 
-    title = desc = ""
-    
-    view = like = coin = danmaku = favorite = reply = ""
+    aid = 0
+    cid = 0
 
-    quality = duration = 0
+    title = ""
+    desc = ""
 
-    pages = down_pages = episodes = []
+    view = ""
+    like = ""
+    coin = ""
+    danmaku = ""
+    favorite = ""
+    reply = ""
 
-    quality_id = quality_desc = []
+    quality = 0
+    duration = 0
 
-    multiple = collection = ""
+    pages = []
+    down_pages = []
+    episodes = []
+
+    quality_id = []
+    quality_desc = []
+
+    multiple = ""
+    collection = ""
+
 
 class ProcessError(Exception):
     pass
+
 
 class VideoParser:
     def __init__(self, onError, onRedirect):
         self.onError = onError
         self.onRedirect = onRedirect
 
-    def get_aid(self, url):
+    def get_aid(self, url: str):
         VideoInfo.aid = re.findall(r"av[0-9]*", url)[0][2:]
-        
+
         url = api.aid_url_api(VideoInfo.aid)
 
-        aid_request = requests.get(url, headers = get_header())
+        aid_request = requests.get(url, headers=get_header())
         aid_json = json.loads(aid_request.text)
 
         self.check_json(aid_json)
@@ -44,17 +61,19 @@ class VideoParser:
         bvid = aid_json["data"]["bvid"]
         self.set_bvid(bvid)
 
-    def get_bvid(self, url):
+    def get_bvid(self, url: str):
         bvid = re.findall(r"BV\w*", url)[0]
         self.set_bvid(bvid)
 
-    def set_bvid(self, bvid):
-        VideoInfo.bvid, VideoInfo.url = bvid, API.URL.bvid_url_api(bvid)
+    def set_bvid(self, bvid: str):
+        VideoInfo.bvid, VideoInfo.url = bvid, api.bvid_url_api(bvid)
 
     def get_video_info(self):
-        url = API.Video.info_api(VideoInfo.bvid)
+        url = api.info_api(api.APIType.Video, bvid=VideoInfo.bvid)
 
-        info_request = requests.get(url, headers = get_header(VideoInfo.url, cookie = Config.sessdata))
+        info_request = requests.get(
+            url, headers=get_header(VideoInfo.url, cookie=Config.sessdata)
+        )
         info_json = json.loads(info_request.text)
 
         self.check_json(info_json)
@@ -64,7 +83,7 @@ class VideoParser:
         if "redirect_url" in info_data:
             self.onRedirect(info_data["redirect_url"])
             raise ProcessError("Bangumi type detect")
-        
+
         VideoInfo.title = info_data["title"]
         VideoInfo.desc = info_data["desc"] if info_data["desc"] != "-" else "暂无简介"
         VideoInfo.duration = info_data["duration"]
@@ -94,9 +113,11 @@ class VideoParser:
         VideoInfo.reply = format_data(info_stat["reply"])
 
     def get_video_quality(self):
-        url = API.Video.download_api(VideoInfo.bvid, VideoInfo.cid)
+        url = api.download_api(
+            api.APIType.Video, bvid=VideoInfo.bvid, cid=VideoInfo.cid
+        )
 
-        video_request = requests.get(url, headers = get_header(cookie = Config.sessdata))
+        video_request = requests.get(url, headers=get_header(cookie=Config.sessdata))
         video_json = json.loads(video_request.text)
 
         self.check_json(video_json)
@@ -111,10 +132,10 @@ class VideoParser:
             self.get_aid(url)
         else:
             self.get_bvid(url)
-        
+
         self.get_video_info()
         self.get_video_quality()
-    
-    def check_json(self, json):
+
+    def check_json(self, json: Dict[str, Any]):
         if json["code"] != 0:
             self.onError(400)

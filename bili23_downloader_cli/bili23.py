@@ -4,21 +4,20 @@ import click
 import colorama
 from threading import Thread
 
-from bili23_downloader_cli.utils.config import Config
-from bili23_downloader_cli.utils.video import VideoInfo, VideoParser
-from bili23_downloader_cli.utils.bangumi import BangumiInfo, BangumiParser
-from bili23_downloader_cli.cli.download import DownloadUtils
 from bili23_downloader_cli.cli.common import (
     check_arguments,
     check_ffmpeg_available,
-    find_str,
-    process_shortlink,
+    show_bangumi_info,
     show_episodes_selection,
     show_error_info,
     show_version_info,
     show_video_info,
-    show_bangumi_info,
 )
+from bili23_downloader_cli.utils.config import Config
+from bili23_downloader_cli.utils.tools import find_str, process_shortlink
+from bili23_downloader_cli.utils.video import VideoInfo, VideoParser
+from bili23_downloader_cli.utils.bangumi import BangumiInfo, BangumiParser
+from bili23_downloader_cli.cli.download import DownloadUtils
 
 colorama.init(autoreset=True)
 
@@ -27,7 +26,7 @@ class Info:
     type = ""
 
 
-def parse(url, info=False):
+def parse(url: str, info: bool = False):
     if find_str("b23.tv", url):
         url = process_shortlink(url)
 
@@ -111,7 +110,9 @@ def parse(url, info=False):
     is_flag=True,
     help="显示版本信息",
 )
-def main(i, p, d, t, q, c, quiet, a, edit_config):
+def main(
+    i: str, p, d: str, t: int, q: int, c: str, quiet: bool, a: bool, edit_config: bool
+):
     check_ffmpeg_available()
 
     Config.Download.path = d
