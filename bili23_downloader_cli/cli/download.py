@@ -1,10 +1,20 @@
 import json
+import os
+import re
 import requests
 import subprocess
 
 
 from bili23_downloader_cli.utils.config import Config
-from bili23_downloader_cli.utils.tools import get_header,codec_map
+from bili23_downloader_cli.utils.tools import (
+    format_bangumi_title,
+    get_file_from_url,
+    get_header,
+    codec_map,
+    get_legal_name,
+    quality_map,
+    remove_files,
+)
 from bili23_downloader_cli.utils.video import VideoInfo
 from bili23_downloader_cli.utils.bangumi import BangumiInfo
 from bili23_downloader_cli.utils.audio import AudioInfo
@@ -57,7 +67,7 @@ class DownloadUtils:
         return self.get_video_durl_list()
 
     def get_audio_durl(self):
-        url = API.Audio.download_api(self.info["sid"])
+        url = api.download_api(APIType.Audio, self.info["sid"])
 
         audio_request = requests.get(url, headers = get_header(self.info["url"]))
         audio_json = json.loads(audio_request.text)
@@ -234,7 +244,7 @@ class DownloadUtils:
         if not Config.danmaku:
             return
         
-        url = API.URL.danmaku_api(self.info["cid"])
+        url = api.danmaku_api(self.info["cid"])
 
         get_file_from_url(url, "{}.xml".format(self.info["title"]))
 
@@ -242,7 +252,7 @@ class DownloadUtils:
         if not Config.subtitle:
             return
 
-        url = API.URL.subtitle_api(self.info["cid"], self.info["bvid"])
+        url = api.subtitle_api(self.info["cid"], self.info["bvid"])
 
         req = requests.get(url, headers = get_header())
 

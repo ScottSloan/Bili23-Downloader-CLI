@@ -4,21 +4,20 @@ import click
 import colorama
 from threading import Thread
 
-from bili23_downloader_cli.utils.config import Config
-from bili23_downloader_cli.utils.video import VideoInfo, VideoParser
-from bili23_downloader_cli.utils.bangumi import BangumiInfo, BangumiParser
-from bili23_downloader_cli.cli.download import DownloadUtils
 from bili23_downloader_cli.cli.common import (
     check_arguments,
     check_ffmpeg_available,
-    find_str,
-    process_shortlink,
+    show_bangumi_info,
     show_episodes_selection,
     show_error_info,
     show_version_info,
     show_video_info,
-    show_bangumi_info,
 )
+from bili23_downloader_cli.utils.config import Config
+from bili23_downloader_cli.utils.tools import find_str, process_shortlink
+from bili23_downloader_cli.utils.video import VideoInfo, VideoParser
+from bili23_downloader_cli.utils.bangumi import BangumiInfo, BangumiParser
+from bili23_downloader_cli.cli.download import DownloadUtils
 
 colorama.init(autoreset=True)
 

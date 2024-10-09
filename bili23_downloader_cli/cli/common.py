@@ -1,11 +1,17 @@
+import os
 import re
 import sys
 from io import StringIO
 
-from ..utils.video import VideoInfo
-from ..utils.bangumi import BangumiInfo
-from ..utils.tools import *
-from ..utils.config import Config
+from bili23_downloader_cli.utils.video import VideoInfo
+from bili23_downloader_cli.utils.bangumi import BangumiInfo
+from bili23_downloader_cli.utils.tools import (
+    format_bangumi_title,
+    quality_map,
+    codec_map,
+)
+from bili23_downloader_cli.utils.config import Config
+
 
 def show_error_info(code, badge = None):
     if code == 400:
