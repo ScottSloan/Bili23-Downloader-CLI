@@ -2,10 +2,9 @@ import re
 import os
 import json
 import math
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 import requests
 
-from bili23_downloader_cli.utils.bangumi import BangumiInfo
 
 from .config import Config
 
@@ -117,11 +116,12 @@ def find_str(pattern: str, string: str):
         return False
 
 
-def format_bangumi_title(episode: Dict[str, Any]):
-    if BangumiInfo.type == "电影":
-        return "{} {}".format(BangumiInfo.title, episode["title"])
-    else:
-        return episode["share_copy"]
+# TODO: 需要重新添加
+# def format_bangumi_title(episode: Dict[str, Any]):
+#     if BangumiInfo.type == "电影":
+#         return "{} {}".format(BangumiInfo.title, episode["title"])
+#     else:
+#         return episode["share_copy"]
 
 
 def format_data(data: int) -> str:
