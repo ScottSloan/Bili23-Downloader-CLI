@@ -27,7 +27,7 @@ Issue = "https://github.com/ScottSloan/Bili23-Downloader-CLI/issues"
 
 [project.scripts]
 bili233 = "bili23_downloader_cli.bili23:main"
-bili23_new = "bili23_downloader_cli.main:main"
+bili23_new = "bili23_downloader_cli.main:app"
 
 [tool.commitizen]
 name = "cz_gitmoji"
