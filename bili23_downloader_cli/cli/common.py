@@ -6,8 +6,8 @@ from typing import Optional
 
 from bili23_downloader_cli.utils.video import VideoInfo
 from bili23_downloader_cli.utils.bangumi import BangumiInfo
-from bili23_downloader_cli.utils.tools import (
-    format_bangumi_title,
+from bili23_downloader_cli.utils.constant import (
+    # format_bangumi_title,
     quality_map,
     codec_map,
 )
@@ -137,14 +137,15 @@ def show_episodes_selection(type: str):
                 for i in VideoInfo.pages
             ]
     else:
-        episodes_list = [
-            "{}.{} {}".format(
-                index + 1,
-                format_bangumi_title(value),
-                "({})".format(value["badge"]) if value["badge"] != "" else "",
-            )
-            for index, value in enumerate(BangumiInfo.episodes)
-        ]
+        # episodes_list = [
+        #     "{}.{} {}".format(
+        #         index + 1,
+        #         format_bangumi_title(value),
+        #         "({})".format(value["badge"]) if value["badge"] != "" else "",
+        #     )
+        #     for index, value in enumerate(BangumiInfo.episodes)
+        # ]
+        ...
 
     return 0 if Config.download_all else get_episodes_selection(episodes_list)
 

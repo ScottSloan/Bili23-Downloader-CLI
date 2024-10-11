@@ -9,11 +9,18 @@ from bili23_downloader_cli.utils.api import APIType
 
 
 class BangumiInfo:
-    url = bvid = ""
+    url = ""
+    bvid = ""
 
-    epid = ssid = mid = cid = 0
+    epid = 0
+    ssid = 0
+    mid = 0
+    cid = 0
 
-    title = desc = newep = type = ""
+    title = ""
+    desc = ""
+    newep = ""
+    type = ""
 
     view = 0
     coin = 0
@@ -23,9 +30,11 @@ class BangumiInfo:
 
     quality = 0
 
-    episodes = down_episodes = []
+    episodes = []
+    down_episodes = []
 
-    quality_id = quality_desc = []
+    quality_id = []
+    quality_desc = []
 
     sections = {}
 
