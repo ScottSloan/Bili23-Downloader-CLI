@@ -17,7 +17,8 @@ classifiers = [
 dependencies = [
     "click>=8.1.7",
     "colorama>=0.4.6",
-    "requests>=2.32.3"
+    "requests>=2.32.3",
+    "typer>=0.12.5",
 ]
 
 [project.urls]
@@ -26,6 +27,7 @@ Issue = "https://github.com/ScottSloan/Bili23-Downloader-CLI/issues"
 
 [project.scripts]
 bili233 = "bili23_downloader_cli.bili23:main"
+bili23_new = "bili23_downloader_cli.main:main"
 
 [tool.commitizen]
 name = "cz_gitmoji"
@@ -33,6 +35,11 @@ tag_format = "v$version"
 version_scheme = "pep440"
 version_provider = "pep621"
 update_changelog_on_bump = true
+
+[tool.uv]
+dev-dependencies = [
+    "ipykernel>=6.29.5",
+]
 
 
 [build-system]
