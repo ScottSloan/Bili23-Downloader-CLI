@@ -1,7 +1,15 @@
 from enum import Enum
-from typing import Annotated, Any, Dict
+from ipaddress import IPv4Address
+from pathlib import Path
+
+from pydantic import BaseModel
+from pydantic_settings import BaseSettings
+from typing import Annotated, Any, Dict, Optional
 
 from typer import Argument, Option, Typer
+
+from bili23_downloader_cli.config import check_config, get_config
+from bili23_downloader_cli.utils.constant import VideoCodec, VideoQuality
 
 app = Typer(
     no_args_is_help=True,
@@ -62,6 +70,8 @@ def get_video_info(url: str) -> Dict[str, Any]:
     raise NotImplementedError
 
 
+# command 它们就应该留在这个目录或者 cli.py
+########################################
 @app.command()
 def download(
     url: Annotated[
@@ -73,9 +83,11 @@ def download(
     ] = False,  # 下载的时候默认不显示视频的信息，如果需要显示，则跟 --info / -i
 ):
     """下载"""
+    check_config()
+    # config = get_config()
 
-    video_info = get_video_info(url)
-    get_video_type(video_info["type"])
+    # video_info = get_video_info(url)
+    # get_video_type(video_info["type"])
 
     if show_info:
         # TODO： 需要接rich 打印视频的信息
