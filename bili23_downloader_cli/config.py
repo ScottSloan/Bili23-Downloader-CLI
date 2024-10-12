@@ -5,9 +5,10 @@ TODO: 重新编写的config.py, 删掉原来的utils.config.py 后记得删除�
 from ipaddress import IPv4Address
 from pathlib import Path
 from pprint import pp
-from typing import Optional, Tuple, Type
+from typing import Annotated, Optional, Tuple, Type
 
 from pydantic import BaseModel, Field, ConfigDict
+from pydantic.functional_validators import BeforeValidator, AfterValidator
 from pydantic_settings import (
     BaseSettings,
     PydanticBaseSettingsSource,
@@ -40,11 +41,17 @@ class DownloadSettings(BaseModel):
     """下载保存目录"""
     max_thread: int = 4
     """最大下载线程"""
-    quality: VideoQuality = Field(default=VideoQuality.HD_1080P, validate_default=True)
-    codec: VideoCodec = Field(default=VideoCodec.HEVC, validate_default=True)
+    quality: Annotated[
+        VideoQuality,
+        Field(validate_default=True),
+        AfterValidator(lambda v: VideoQuality(v)),
+    ] = VideoQuality.HD_1080P
+    codec: Annotated[
+        VideoCodec,
+        Field(validate_default=True),
+        AfterValidator(lambda v: VideoCodec(v)),
+    ] = VideoCodec.HEVC
 
-    # TODO: quality 配置文件存的是数字，但是在这里需要转化成 VideoQuality的key
-    # TODO: codec 配置文件存的是value，但是在这里需要转化成 VideoQuality的key
     model_config = ConfigDict(use_enum_values=True)
 
 
@@ -53,7 +60,7 @@ class UserSettings(BaseModel):
 
 
 class ProxySettings(BaseModel):
-    ip: Optional[IPv4Address] = None
+    ip: Annotated[Optional[IPv4Address], BeforeValidator(lambda v: None if v == "" else v)] = None
     port: Optional[str] = None
     username: Optional[str] = None
     password: Optional[str] = None
@@ -62,20 +69,20 @@ class ProxySettings(BaseModel):
 class Config(BaseSettings):
     download: Optional[DownloadSettings] = DownloadSettings()
     user: Optional[UserSettings] = UserSettings()
-    # proxy: ProxySettings  # = ProxySettings()
+    proxy: Optional[ProxySettings] = ProxySettings()
 
-    # model_config = SettingsConfigDict(toml_file=get_config_file())
+    model_config = SettingsConfigDict(toml_file=get_config_file())
 
-    # @classmethod
-    # def settings_customise_sources(
-    #     cls,
-    #     settings_cls: Type[BaseSettings],
-    #     init_settings: PydanticBaseSettingsSource,
-    #     env_settings: PydanticBaseSettingsSource,
-    #     dotenv_settings: PydanticBaseSettingsSource,
-    #     file_secret_settings: PydanticBaseSettingsSource,
-    # ) -> Tuple[PydanticBaseSettingsSource, ...]:
-    #     return (TomlConfigSettingsSource(settings_cls),)
+    @classmethod
+    def settings_customise_sources(
+        cls,
+        settings_cls: Type[BaseSettings],
+        init_settings: PydanticBaseSettingsSource,
+        env_settings: PydanticBaseSettingsSource,
+        dotenv_settings: PydanticBaseSettingsSource,
+        file_secret_settings: PydanticBaseSettingsSource,
+    ) -> Tuple[PydanticBaseSettingsSource, ...]:
+        return (TomlConfigSettingsSource(settings_cls),)
 
 
 def has_config() -> bool:
@@ -83,17 +90,19 @@ def has_config() -> bool:
     检查是否有配置文件
     """
     config_file = get_config_file()
-    return config_file.exists() and (config_file.read_text().__len__() > 0)
+
+    # 必须文件存在且不能是空文件
+    return config_file.exists() and rtoml.load(config_file)
 
 
 def save_config(config: Config):
     """保存配置"""
-    rtoml.dump(config.model_dump(), get_config_file())
+    rtoml.dump(config.model_dump(), get_config_file(), none_value="")
 
 
 def load_config() -> Config:
     """从配置文件中加载配置"""
-    return Config(**rtoml.load(get_config_file()))
+    return Config(**rtoml.load(get_config_file(), none_value=""))
 
 
 def init_config():
@@ -104,16 +113,12 @@ def init_config():
     # TODO: 使用交互式进行配置
 
 
-def get_config() -> Config:
-    """获取配置"""
-    return Config()
-
-
 def check_config():
     """检查配置文是否存在，是否初始化什么的
     然后如果存在异常的也需要print出去，或者让用户进行修改，记得提供可能存在的异常
     """
     if not has_config():
+        print("Initializing app configs ...")
         # 如果app的配置目录不存在则创建目录
         config_path = get_config_path()
         if not config_path.exists():
@@ -122,11 +127,14 @@ def check_config():
         get_config_file().touch()
 
         config = Config()
+        init_config()
         pp(config)
-        # save_config(config)
+        save_config(config)
 
-        # print(
-        #     "发现你是第一次用，我们来配置一下配置文件吧!"
-        # )  # TODO: 这个可以改成 rich的写法
+    else:
+        print("loading app configs ...")
+        try:
+            load_config()
+        except Exception as e:
+            print(f"config file has error: {e}")
 
-        # init_config()
