@@ -50,7 +50,6 @@ class DownloadSettings(BaseModel):
         AfterValidator(lambda v: VideoCodec(v)),
     ] = VideoCodec.HEVC
 
-    # model_config = ConfigDict(use_enum_values=True)
 
 
 class UserSettings(BaseModel):
@@ -70,7 +69,6 @@ class Config(BaseSettings):
     proxy: Optional[ProxySettings] = ProxySettings()
 
     model_config = SettingsConfigDict(
-        # use_enum_values=True,
         toml_file=get_config_file()
     )
 

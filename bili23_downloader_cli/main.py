@@ -1,15 +1,9 @@
 from enum import Enum
-from ipaddress import IPv4Address
-from pathlib import Path
-
-from pydantic import BaseModel
-from pydantic_settings import BaseSettings
-from typing import Annotated, Any, Dict, Optional
+from typing import Annotated, Any, Dict
 
 from typer import Argument, Option, Typer
 
-from bili23_downloader_cli.config import check_config, get_config
-from bili23_downloader_cli.utils.constant import VideoCodec, VideoQuality
+from bili23_downloader_cli.config import check_config, load_config
 
 app = Typer(
     no_args_is_help=True,
@@ -84,7 +78,7 @@ def download(
 ):
     """下载"""
     check_config()
-    # config = get_config()
+    config = load_config()
 
     # video_info = get_video_info(url)
     # get_video_type(video_info["type"])
