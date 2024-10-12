@@ -43,6 +43,8 @@ dev-dependencies = [
     "ipykernel>=6.29.5",
 ]
 
+[tool.ruff]
+line-length = 120
 
 [build-system]
 requires = ["hatchling"]
