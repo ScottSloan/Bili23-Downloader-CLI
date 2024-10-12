@@ -4,10 +4,9 @@ TODO: 重新编写的config.py, 删掉原来的utils.config.py 后记得删除�
 
 from ipaddress import IPv4Address
 from pathlib import Path
-from pprint import pp
 from typing import Annotated, Optional, Tuple, Type
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel
 from pydantic.functional_validators import BeforeValidator, AfterValidator
 from pydantic_settings import (
     BaseSettings,
@@ -19,6 +18,7 @@ from pydantic_settings import (
 from bili23_downloader_cli.util import get_user_config_path
 from bili23_downloader_cli.utils.constant import VideoCodec, VideoQuality
 import rtoml
+from typer import prompt,confirm
 
 
 APP_NAME = "bili23"
@@ -43,16 +43,14 @@ class DownloadSettings(BaseModel):
     """最大下载线程"""
     quality: Annotated[
         VideoQuality,
-        Field(validate_default=True),
         AfterValidator(lambda v: VideoQuality(v)),
     ] = VideoQuality.HD_1080P
     codec: Annotated[
         VideoCodec,
-        Field(validate_default=True),
         AfterValidator(lambda v: VideoCodec(v)),
     ] = VideoCodec.HEVC
 
-    model_config = ConfigDict(use_enum_values=True)
+    # model_config = ConfigDict(use_enum_values=True)
 
 
 class UserSettings(BaseModel):
@@ -71,7 +69,10 @@ class Config(BaseSettings):
     user: Optional[UserSettings] = UserSettings()
     proxy: Optional[ProxySettings] = ProxySettings()
 
-    model_config = SettingsConfigDict(toml_file=get_config_file())
+    model_config = SettingsConfigDict(
+        # use_enum_values=True,
+        toml_file=get_config_file()
+    )
 
     @classmethod
     def settings_customise_sources(
@@ -97,7 +98,11 @@ def has_config() -> bool:
 
 def save_config(config: Config):
     """保存配置"""
-    rtoml.dump(config.model_dump(), get_config_file(), none_value="")
+    config_dict = config.model_dump()
+    # TODO: 可以写一个嵌套遍历，将Enum 转化成对应的value
+    config_dict["download"]["quality"] = config.download.quality.value
+    config_dict["download"]["codec"] = config.download.codec.value
+    rtoml.dump(config_dict, get_config_file(),pretty=True, none_value="")
 
 
 def load_config() -> Config:
@@ -105,13 +110,25 @@ def load_config() -> Config:
     return Config(**rtoml.load(get_config_file(), none_value=""))
 
 
-def init_config():
+def init_config(config: Config):
     """
     初始化配置文件
     """
     # TODO: 将 Config 的默认配置值 写入到 .config/<Config.app.name>/config.toml 中
     # TODO: 使用交互式进行配置
-
+    # 下载地址
+    # 最大下载线程
+    # 视频质量
+    # 视频编解格式
+    
+    # 是否扫码进行登录 # TODO: 这里需要说明登录之后有哪些好处，比如支持最高品质啥的
+    
+    # 是否需要添加代理
+    if confirm("是否需要添加代理"):
+        config.proxy.ip = prompt("代理地址ipv4格式")
+        config.proxy.port = prompt("代理端口")
+        config.proxy.username = prompt("代理账号")
+        config.proxy.password = prompt("代理密码")
 
 def check_config():
     """检查配置文是否存在，是否初始化什么的
@@ -127,8 +144,7 @@ def check_config():
         get_config_file().touch()
 
         config = Config()
-        init_config()
-        pp(config)
+        init_config(config)
         save_config(config)
 
     else:
