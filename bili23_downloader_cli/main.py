@@ -2,8 +2,10 @@ from enum import Enum
 from typing import Annotated, Any, Dict
 
 from typer import Argument, Option, Typer
+from rich import print
 
-from bili23_downloader_cli.config import check_config, load_config
+from bili23_downloader_cli.config import check_config
+from bili23_downloader_cli.api import Api, LoginQRCodeInfo
 
 app = Typer(
     no_args_is_help=True,
@@ -64,6 +66,17 @@ def get_video_info(url: str) -> Dict[str, Any]:
     raise NotImplementedError
 
 
+def generate_login_qr_code(login_qr_code_info: LoginQRCodeInfo):
+    """生成二维码的图片"""
+
+
+def get_login_qr_code_info() -> LoginQRCodeInfo:
+    """
+    获取登录二维码的信息
+    """
+    return Api().get_login_qr_code_info()
+
+
 # command 它们就应该留在这个目录或者 cli.py
 ########################################
 @app.command()
@@ -78,7 +91,7 @@ def download(
 ):
     """下载"""
     check_config()
-    config = load_config()
+    # config = load_config()
 
     # video_info = get_video_info(url)
     # get_video_type(video_info["type"])
@@ -91,6 +104,17 @@ def download(
     # 是否选择 视频品质，默认为配置的value
     # 是否选择 音频品质, 同上
     # ...
+
+
+@app.command()
+def login():
+    """
+    登录
+    """
+    # TODO: 后续将和用户有关的命令集成到 user 这个子命令中如  bili23 user login
+    login_qr_code_info = get_login_qr_code_info()
+    print(login_qr_code_info)
+    # qr_code = generate_login_qr_code(login_qr_code_info)
 
 
 @app.command()
@@ -114,9 +138,7 @@ def config():
 def main(
     version: Annotated[
         bool,
-        Option(
-            "--version", "-v", callback=show_version, help="show version", is_eager=True
-        ),
+        Option("--version", "-v", callback=show_version, help="show version", is_eager=True),
     ] = False,
 ):
     """
