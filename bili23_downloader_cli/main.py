@@ -90,7 +90,6 @@ def download(
     ] = False,  # 下载的时候默认不显示视频的信息，如果需要显示，则跟 --info / -i
 ):
     """下载"""
-    check_config()
     # config = load_config()
 
     # video_info = get_video_info(url)
@@ -111,6 +110,7 @@ def login():
     """
     登录
     """
+
     # TODO: 后续将和用户有关的命令集成到 user 这个子命令中如  bili23 user login
     login_qr_code_info = get_login_qr_code_info()
     print(login_qr_code_info)
@@ -144,3 +144,4 @@ def main(
     """
     BiliBili 视频下载工具
     """
+    check_config()
