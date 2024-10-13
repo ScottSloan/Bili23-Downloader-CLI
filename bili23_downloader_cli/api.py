@@ -2,6 +2,7 @@ from typing import Any, Dict, Optional, Tuple
 from pydantic import BaseModel
 from requests import Session
 from requests.auth import HTTPProxyAuth, AuthBase
+from rich import print
 
 from bili23_downloader_cli.config import load_config
 
@@ -27,8 +28,7 @@ class Api:
         url = f"{BASE_LOGIN_URL}/generate"
         print(url)
         data = self.get(url)
-
-        return LoginQRCodeInfo(url=data["url"], key=data["key"])
+        return LoginQRCodeInfo(url=data["url"], key=data["qrcode_key"])
 
     def get(
         self,
@@ -39,11 +39,17 @@ class Api:
     ) -> Dict[str, Any]:
         """GET 请求"""
         res = self.session.get(url, headers=headers, proxies=proxies, auth=auth)
-        data = res.json()
+        result = res.json()
+
+        # 判断状态码 TODO: 可能需要完善
         if res.status_code != 200:
             print(res.json())
-        print(data)
-        return data
+
+        # 判断消息内容
+        if result["code"] != 0:
+            print(result["message"])
+
+        return result["data"]
 
     def init_session(self):
         """初始化session"""
@@ -55,7 +61,7 @@ class Api:
     @property
     def proxies(self) -> Dict[str, str]:
         proxy = self.config.proxy
-        if proxy:
+        if proxy and proxy.enabled:
             return {
                 scheme: f"{proxy.ip}{':'if proxy.port else ''}{proxy.port if proxy.port else''}"
                 for scheme in ["http", "https"]
