@@ -18,7 +18,7 @@ from pydantic_settings import (
 from bili23_downloader_cli.util import get_user_config_path
 from bili23_downloader_cli.utils.constant import VideoCodec, VideoQuality
 import rtoml
-from typer import prompt,confirm
+from typer import prompt, confirm
 
 
 APP_NAME = "bili23"
@@ -51,16 +51,21 @@ class DownloadSettings(BaseModel):
     ] = VideoCodec.HEVC
 
 
-
 class UserSettings(BaseModel):
-    sessdata: Optional[str] = None
+    sessdata: str = ""
 
 
 class ProxySettings(BaseModel):
+    enabled: bool = False
+    """是否启用代理"""
+    auth_enabled: bool = False
+    """是否启用用户验证"""
     ip: Annotated[Optional[IPv4Address], BeforeValidator(lambda v: None if v == "" else v)] = None
-    port: Optional[str] = None
-    username: Optional[str] = None
-    password: Optional[str] = None
+    """代理ip"""
+    port: str = ""
+    """代理端口"""
+    username: str = ""
+    password: str = ""
 
 
 class Config(BaseSettings):
@@ -68,9 +73,7 @@ class Config(BaseSettings):
     user: Optional[UserSettings] = UserSettings()
     proxy: Optional[ProxySettings] = ProxySettings()
 
-    model_config = SettingsConfigDict(
-        toml_file=get_config_file()
-    )
+    model_config = SettingsConfigDict(toml_file=get_config_file())
 
     @classmethod
     def settings_customise_sources(
@@ -100,7 +103,7 @@ def save_config(config: Config):
     # TODO: 可以写一个嵌套遍历，将Enum 转化成对应的value
     config_dict["download"]["quality"] = config.download.quality.value
     config_dict["download"]["codec"] = config.download.codec.value
-    rtoml.dump(config_dict, get_config_file(),pretty=True, none_value="")
+    rtoml.dump(config_dict, get_config_file(), pretty=True, none_value="")
 
 
 def load_config() -> Config:
@@ -118,15 +121,16 @@ def init_config(config: Config):
     # 最大下载线程
     # 视频质量
     # 视频编解格式
-    
+
     # 是否扫码进行登录 # TODO: 这里需要说明登录之后有哪些好处，比如支持最高品质啥的
-    
+
     # 是否需要添加代理
     if confirm("是否需要添加代理"):
         config.proxy.ip = prompt("代理地址ipv4格式")
         config.proxy.port = prompt("代理端口")
         config.proxy.username = prompt("代理账号")
         config.proxy.password = prompt("代理密码")
+
 
 def check_config():
     """检查配置文是否存在，是否初始化什么的
@@ -151,4 +155,3 @@ def check_config():
             load_config()
         except Exception as e:
             print(f"config file has error: {e}")
-
