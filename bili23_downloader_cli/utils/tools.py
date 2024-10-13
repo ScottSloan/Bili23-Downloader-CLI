@@ -2,26 +2,11 @@ import re
 import os
 import json
 import math
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 import requests
 
-from bili23_downloader_cli.utils.bangumi import BangumiInfo
 
 from .config import Config
-
-quality_map = {
-    "超高清 8K": 127,
-    "杜比视界": 126,
-    "真彩 HDR": 125,
-    "超清 4K": 120,
-    "高清 1080P60": 116,
-    "高清 1080P+": 112,
-    "高清 1080P": 80,
-    "高清 720P": 64,
-    "清晰 480P": 32,
-    "流畅 360P": 16,
-}
-codec_map = {"AVC/H.264": "avc", "HEVC/H.265": "hevc", "AV1": "av1"}
 
 
 def process_shortlink(url: str):
@@ -32,7 +17,7 @@ def process_shortlink(url: str):
 
 
 def get_legal_name(name: str):
-    return re.sub('[/\:*?"<>|]', "", name)
+    return re.sub(r'[/\:*?"<>|]', "", name)
 
 
 def get_header(
@@ -117,11 +102,12 @@ def find_str(pattern: str, string: str):
         return False
 
 
-def format_bangumi_title(episode: Dict[str, Any]):
-    if BangumiInfo.type == "电影":
-        return "{} {}".format(BangumiInfo.title, episode["title"])
-    else:
-        return episode["share_copy"]
+# TODO: 需要重新添加
+# def format_bangumi_title(episode: Dict[str, Any]):
+#     if BangumiInfo.type == "电影":
+#         return "{} {}".format(BangumiInfo.title, episode["title"])
+#     else:
+#         return episode["share_copy"]
 
 
 def format_data(data: int) -> str:

@@ -7,9 +7,12 @@ from bili23_downloader_cli.utils.tools import get_header, get_proxy
 
 
 class LiveInfo:
-    id = room_id = live_status = 0
+    id = 0
+    room_id = 0
+    live_status = 0
 
-    title = playurl = ""
+    title = ""
+    playurl = ""
 
 
 class LiveParser:

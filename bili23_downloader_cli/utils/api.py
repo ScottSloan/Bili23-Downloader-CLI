@@ -54,22 +54,22 @@ def info_api(type: APIType, **kwargs: Any) -> str:
         case APIType.Video:
             # if not bvid:
             #     raise KeyError(f"bvid: {bvid}")
-            return f"{BASE_API_URL}/x/web-interface/view?bvid={kwargs.get("bvid")}"
+            return f"{BASE_API_URL}/x/web-interface/view?bvid={kwargs.get('bvid')}"
         case APIType.Bangumi:
             # if not argument or not value:
             #     raise KeyError(f"argument: {argument}, value: {value}")
             # return f"{BASE_API_URL}/pgc/view/web/season?{argument}={value}"
-            return f"{BASE_API_URL}/pgc/view/web/season?{kwargs.get("argument")}={kwargs.get("value")}"
+            return f"{BASE_API_URL}/pgc/view/web/season?{kwargs.get('argument')}={kwargs.get('value')}"
         case APIType.Audio:
             # if not sid:
             #     raise KeyError(f"sid: {sid}")
-            return f"{BASE_URL}/audio/music-service-c/web/song/info?sid={kwargs.get("sid")}"
+            return f"{BASE_URL}/audio/music-service-c/web/song/info?sid={kwargs.get('sid')}"
         case APIType.AudioPlayList:
-            return f"{BASE_URL}/audio/music-service-c/web/song/of-menu?sid={kwargs.get("amid")}&pn=1&ps=100"
+            return f"{BASE_URL}/audio/music-service-c/web/song/of-menu?sid={kwargs.get('amid')}&pn=1&ps=100"
         case APIType.Live:
-            return f"{BASE_LIVE_API_URL}/xlive/web-room/v1/index/getRoomBaseInfo?room_ids={kwargs.get("id")}&req_biz=web_room_componet"
+            return f"{BASE_LIVE_API_URL}/xlive/web-room/v1/index/getRoomBaseInfo?room_ids={kwargs.get('id')}&req_biz=web_room_componet"
         case APIType.Cheese:
-            return f"{BASE_API_URL}/pugv/view/web/season?{kwargs.get("argument")}={kwargs.get("value")}"
+            return f"{BASE_API_URL}/pugv/view/web/season?{kwargs.get('argument')}={kwargs.get('value')}"
         case _:  # type: ignore
             raise NotImplementedError
 

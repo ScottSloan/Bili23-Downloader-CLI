@@ -8,14 +8,13 @@ import subprocess
 
 from bili23_downloader_cli.utils.config import Config
 from bili23_downloader_cli.utils.tools import (
-    format_bangumi_title,
+    # format_bangumi_title,
     get_file_from_url,
     get_header,
-    codec_map,
     get_legal_name,
-    quality_map,
     remove_files,
 )
+from bili23_downloader_cli.utils.constant import codec_map, quality_map
 from bili23_downloader_cli.utils.video import VideoInfo
 from bili23_downloader_cli.utils.bangumi import BangumiInfo
 from bili23_downloader_cli.utils.audio import AudioInfo
@@ -205,7 +204,7 @@ class DownloadUtils:
         for i in BangumiInfo.down_episodes:
             info = self.get_download_info(
                 BangumiInfo.url,
-                format_bangumi_title(i),
+                # format_bangumi_title(i),
                 "bangumi",
                 bvid=i["bvid"],
                 cid=i["cid"],
@@ -239,6 +238,9 @@ class DownloadUtils:
             self.download_list.append(info)
 
     def start_download(self):
+        """
+        开始下载
+        """
         quality_temp = dict(map(reversed, quality_map.items()))
         codec_temp = {"AVC": "AVC/H.264", "HEVC": "HEVC/H.265", "AV1": "AV1"}
 

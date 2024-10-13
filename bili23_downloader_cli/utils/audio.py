@@ -8,11 +8,22 @@ from bili23_downloader_cli.utils.api import APIType
 
 
 class AudioInfo:
-    sid = amid = duration = count = 0
+    sid = 0
+    amid = 0
+    duration = 0
+    count = 0
 
-    url = title = author = intro = lyric = ""
+    url = ""
+    title = ""
+    author = ""
+    intro = ""
+    lyric = ""
 
-    play = coin = collect = share = comment = 0
+    play = 0
+    coin = 0
+    collect = 0
+    share = 0
+    comment = 0
 
     playlist = down_list = []
 
